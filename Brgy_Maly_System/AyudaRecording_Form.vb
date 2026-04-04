@@ -1,0 +1,108 @@
+﻿Imports System.Drawing.Drawing2D
+
+Public Class AyudaRecording_Form
+    ' === Responsive Manager Instance ===
+    Private responsiveManager As AyudaRecordingResponsiveManager
+
+    Private Sub AyudaRecording_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' === Apply Gradient ===
+        ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
+
+        ' === Apply Button Styling (Once - never reapply) ===
+        RoundButtonCorners(btnBackToMainPage, 20)
+
+        ' === Initialize Responsive Manager ===
+        responsiveManager = New AyudaRecordingResponsiveManager(Me)
+        responsiveManager.Initialize()
+    End Sub
+
+    ''' <summary>
+    ''' Apply gradient background to panel
+    ''' </summary>
+    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
+        Dim startColor = ColorTranslator.FromHtml(startColorHex)
+        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+
+        Dim brush As New LinearGradientBrush(
+            New Point(0, 0),
+            New Point(pnl.Width, 0),
+            startColor,
+            endColor
+        )
+
+        Dim panelLocal = pnl
+
+        AddHandler panelLocal.Paint, Sub(sender, e)
+                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
+                                     End Sub
+    End Sub
+
+    ''' <summary>
+    ''' Apply rounded corners to button (with resize handler)
+    ''' </summary>
+    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
+        Dim p As New GraphicsPath()
+        p.AddArc(0, 0, radius, radius, 180, 90)
+        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
+        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
+        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
+        p.CloseFigure()
+        btn.Region = New Region(p)
+
+        Dim btnLocal = btn
+
+        AddHandler btn.Resize, Sub(s, args)
+                                   Dim newPath As New GraphicsPath()
+                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
+                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
+                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
+                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
+                                   newPath.CloseFigure()
+                                   btnLocal.Region = New Region(newPath)
+                               End Sub
+    End Sub
+
+    ''' <summary>
+    ''' Back to Main Page button - Return to AyudaMain_Form
+    ''' </summary>
+    Private Sub btnBackToMainPage_Click(sender As Object, e As EventArgs) Handles btnBackToMainPage.Click
+        Try
+            If Dashboard_Layout.CurrentInstance IsNot Nothing Then
+                Dim ayudaMainForm As New AyudaMain_Form()
+                Dashboard_Layout.CurrentInstance.LoadContentPanel(ayudaMainForm)
+            Else
+                MsgBox("Error: Dashboard not initialized.", MsgBoxStyle.Critical, "Error")
+            End If
+        Catch ex As Exception
+            MsgBox("Error loading form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Debug.WriteLine("btnView_Click Error: " & ex.Message)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Cleanup when form closes
+    ''' </summary>
+    Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
+        If responsiveManager IsNot Nothing Then
+            responsiveManager.Cleanup()
+        End If
+        MyBase.OnFormClosing(e)
+    End Sub
+
+    ' ========================================
+    ' TODO: Add your business logic methods here
+    ' ========================================
+    ' - Load residents into DataGridView based on cbResidentType filter
+    ' - Handle DataGridView row selection
+    ' - Fill txtResidentType when resident is selected
+    ' - Populate cbAyuda with ayuda programs from database
+    ' - Handle quantity validation (numeric only)
+    ' - Handle date selection
+    ' - Handle description input
+    ' - Validate all fields before saving
+    ' - Save new ayuda record to database
+    ' - Refresh AyudaMain_Form after save
+    ' - Handle cbResidentType filter change
+    ' ========================================
+
+End Class

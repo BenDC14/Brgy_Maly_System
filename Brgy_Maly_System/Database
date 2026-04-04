@@ -1,0 +1,226 @@
+# Brgy_Maly_System Database Schema
+# Database: barangay_maly
+# Last Updated: April 02, 2026
+
+## ADDRESS TABLE
+- AddressID (INT, PK, auto_increment)
+- HouseNumber (VARCHAR(20), nullable)
+- BlockNumber (VARCHAR(20))
+- LotNumber (VARCHAR(20))
+- AreaNumber (VARCHAR(20), nullable)
+- StreetName (VARCHAR(100))
+- Village (VARCHAR(100), nullable)
+- Subdivision (VARCHAR(100), nullable)
+- Compound (VARCHAR(100), nullable)
+- Barangay (VARCHAR(50))
+- Municipality (VARCHAR(50))
+- Province (VARCHAR(50))
+
+## AUDITTRAIL TABLE
+- AuditId (INT, PK, auto_increment)
+- UserId (INT, FK -> useraccounts.UserId)
+- Username (VARCHAR(50))
+- Form (VARCHAR(50))
+- Action (VARCHAR(20))
+- Description (VARCHAR(255))
+- Timestamp (DATETIME)
+
+## BACKUPLOGS TABLE
+- BackupId (INT, PK, auto_increment)
+- BackupBy (INT, FK -> useraccounts.UserId)
+- FilePath (VARCHAR(255))
+- FileName (VARCHAR(150))
+- Description (VARCHAR(255), nullable)
+- BackupDateTime (DATETIME)
+- BackupStatus (VARCHAR(50))
+- ErrorMessage (VARCHAR(500), nullable)
+
+## BARANGAYAID TABLE
+- AidId (INT, PK, auto_increment)
+- AidName (VARCHAR(50))
+
+## BARANGAYINFORMATION TABLE
+- BarangayInfoID (INT, PK, auto_increment)
+- BarangayName (VARCHAR(100))
+- Logo (LONGBLOB)
+- Mission (TEXT, nullable)
+- Vision (TEXT, nullable)
+- LastUpdatedBy (INT, FK -> useraccounts.UserId)
+- LastUpdatedDate (DATETIME)
+
+## BARANGAYOFFICIALS TABLE
+- OfficialId (INT, PK, auto_increment)
+- PhotoPath (LONGBLOB)
+- FirstName (VARCHAR(50))
+- LastName (VARCHAR(50))
+- Position (VARCHAR(50))
+- TermStart (DATETIME)
+- TermEnd (DATETIME)
+- IsActive (TINYINT)
+- UpdatedAt (TIMESTAMP, auto-update)
+
+## CATEGORIES TABLE
+- CategoryId (INT, PK, auto_increment)
+- Category (VARCHAR(50))
+
+## EDUCATION TABLE
+- EducationID (INT, PK, auto_increment)
+- ResidentID (INT, FK -> residents.ResidentId)
+- EducationLevel (VARCHAR(50))
+- EducationStatus (VARCHAR(50))
+
+## FAMILYHEAD TABLE
+- FamilyId (INT, PK, auto_increment)
+- ResidentId (INT, FK -> residents.ResidentId)
+- FamilyName (VARCHAR(50))
+
+## FAMILYMEMBERS TABLE
+- FamilyMemberId (INT, PK, auto_increment)
+- FamilyId (INT, FK -> familyhead.FamilyId)
+- ResidentId (INT, FK -> residents.ResidentId)
+- RelationshipType (VARCHAR(50))
+
+## FORMS TABLE
+- FormID (INT, PK, auto_increment)
+- FormName (VARCHAR(255), UNIQUE)
+- FormDescription (VARCHAR(500), nullable)
+- FormClass (VARCHAR(255))
+- IsActive (TINYINT)
+- CreatedAt (DATETIME, nullable)
+
+## GENERATEDREPORTS TABLE
+- GeneratedReportsId (INT, PK, auto_increment)
+- ReportTypeId (INT, FK -> reporttype.ReportTypeId)
+- ReportsSubTypeId (INT, FK -> reportsubtype.ReportSubTypeId)
+- GeneratedBy (INT, FK -> useraccounts.UserId)
+- Date (DATETIME)
+- FileName (VARCHAR(255), nullable)
+- FilePath (VARCHAR(255), nullable)
+- Status (VARCHAR(50))
+
+## HOUSEHOLD TABLE
+- HouseholdID (INT, PK, auto_increment)
+- HouseholdNumber (VARCHAR(50))
+- AddressID (INT, FK -> address.AddressID)
+
+## REPORTSUBTYPE TABLE
+- ReportSubTypeId (INT, PK, auto_increment)
+- ReportTypeId (INT, FK -> reporttype.ReportTypeId)
+- ReportSubTypeName (VARCHAR(100))
+
+## REPORTTYPE TABLE
+- ReportTypeId (INT, PK, auto_increment)
+- ReportName (VARCHAR(100))
+
+## RESIDENTAID TABLE
+- ResidentAidId (INT, PK, auto_increment)
+- ResidentId (INT, FK -> residents.ResidentId)
+- AidId (INT, FK -> barangayaid.AidId)
+- AidDate (DATETIME)
+- Quantity (INT)
+- Description (VARCHAR(255), nullable)
+
+## RESIDENTS TABLE
+- ResidentId (INT, PK, auto_increment)
+- LastName (VARCHAR(50))
+- FirstName (VARCHAR(50))
+- MiddleName (VARCHAR(50), nullable)
+- Suffix (VARCHAR(50), nullable)
+- DateOfBirth (DATE)
+- PlaceOfBirth (VARCHAR(100), nullable)
+- Sex (VARCHAR(10))
+- CivilStatus (VARCHAR(30), nullable)
+- Religion (VARCHAR(30), nullable)
+- Citizenship (VARCHAR(30), nullable)
+- Occupation (VARCHAR(50), nullable)
+- Voter (TINYINT, nullable)
+- ContactNumber (VARCHAR(20), nullable)
+- EmailAddress (VARCHAR(100), nullable)
+- Is_Archived (TINYINT, nullable)
+- HouseholdId (INT, FK -> household.HouseholdID)
+
+## RESIDENTCATEGORY TABLE
+- ResidentCategoryId (INT, PK, auto_increment)
+- ResidentId (INT, FK -> residents.ResidentId)
+- CategoryId (INT, FK -> categories.CategoryId)
+- AdditionalInfo (VARCHAR(255), nullable)
+
+## RESTORELOGS TABLE
+- RestoreId (INT, PK, auto_increment)
+- BackupId (INT, FK -> backuplogs.BackupId)
+- RestoredBy (INT, FK -> useraccounts.UserId)
+- RestoreDateTime (DATETIME)
+- RestoreFileName (VARCHAR(255))
+- RestoreFilePath (VARCHAR(500))
+- RestoreStatus (VARCHAR(50))
+- ErrorMessage (VARCHAR(500), nullable)
+
+## USERACCOUNTS TABLE
+- UserId (INT, PK, auto_increment)
+- FirstName (VARCHAR(255))
+- LastName (VARCHAR(255))
+- Username (VARCHAR(255), UNIQUE)
+- Password (VARCHAR(255))
+- Role (VARCHAR(255))
+- IsActive (TINYINT)
+- CreatedAt (DATETIME)
+- UpdatedAt (DATETIME, nullable)
+
+## USERPERMISSIONS TABLE
+- PermissionID (INT, PK, auto_increment)
+- UserId (INT, FK -> useraccounts.UserId)
+- FormID (INT, FK -> forms.FormID)
+- CanView (TINYINT)
+- CanAdd (TINYINT)
+- CanEdit (TINYINT)
+- CanDelete (TINYINT)
+- AssignedBy (INT, nullable, FK -> useraccounts.UserId)
+- AssignedAt (DATETIME, nullable)
+- UpdatedAt (DATETIME, nullable, auto-update)
+
+## KEY RELATIONSHIPS
+- residents.HouseholdId ? household.HouseholdID
+- household.AddressID ? address.AddressID
+- familyhead.ResidentId ? residents.ResidentId
+- familymembers.FamilyId ? familyhead.FamilyId
+- familymembers.ResidentId ? residents.ResidentId
+- education.ResidentID ? residents.ResidentId
+- residentcategory.ResidentId ? residents.ResidentId
+- residentcategory.CategoryId ? categories.CategoryId
+- residentaid.ResidentId ? residents.ResidentId
+- residentaid.AidId ? barangayaid.AidId
+- audittrail.UserId ? useraccounts.UserId
+- backuplogs.BackupBy ? useraccounts.UserId
+- restorelogs.BackupId ? backuplogs.BackupId
+- restorelogs.RestoredBy ? useraccounts.UserId
+- barangayinformation.LastUpdatedBy ? useraccounts.UserId
+- generatedreports.ReportTypeId ? reporttype.ReportTypeId
+- generatedreports.ReportsSubTypeId ? reportsubtype.ReportSubTypeId
+- generatedreports.GeneratedBy ? useraccounts.UserId
+- reportsubtype.ReportTypeId ? reporttype.ReportTypeId
+- userpermissions.UserId ? useraccounts.UserId
+- userpermissions.FormID ? forms.FormID
+- userpermissions.AssignedBy ? useraccounts.UserId
+
+## TOTAL TABLES: 17
+- address
+- audittrail
+- backuplogs
+- barangayaid
+- barangayinformation
+- barangayofficials
+- categories
+- education
+- familyhead
+- familymembers
+- forms
+- generatedreports
+- household
+- reportsubtype
+- reporttype
+- residentaid
+- residents
+- residentcategory
+- restorelogs
+- useraccounts
+- userpermissions
