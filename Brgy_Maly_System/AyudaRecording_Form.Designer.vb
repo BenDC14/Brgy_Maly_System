@@ -119,7 +119,6 @@ Partial Class AyudaRecording_Form
         Me.cbAyuda.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.cbAyuda.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbAyuda.FormattingEnabled = True
-        Me.cbAyuda.Items.AddRange(New Object() {"Educational Assistance", "Family Ayuda", "Senior Citizen Ayuda"})
         Me.cbAyuda.Location = New System.Drawing.Point(1070, 543)
         Me.cbAyuda.Name = "cbAyuda"
         Me.cbAyuda.Size = New System.Drawing.Size(618, 30)
@@ -200,7 +199,6 @@ Partial Class AyudaRecording_Form
         Me.cbResidentType.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.cbResidentType.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbResidentType.FormattingEnabled = True
-        Me.cbResidentType.Items.AddRange(New Object() {"Senior Citizen", "PWD", "Student", "Solo Parent", "Head", "Inhabitant"})
         Me.cbResidentType.Location = New System.Drawing.Point(1483, 142)
         Me.cbResidentType.Name = "cbResidentType"
         Me.cbResidentType.Size = New System.Drawing.Size(212, 30)

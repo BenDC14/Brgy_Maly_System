@@ -22,12 +22,12 @@ Partial Class Dashboard1_Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea5 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend5 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series5 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea6 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend6 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series6 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.FillPanel = New System.Windows.Forms.Panel()
         Me.ResidentPnl = New System.Windows.Forms.Panel()
         Me.TotalResidentsLbl = New System.Windows.Forms.Label()
@@ -45,6 +45,7 @@ Partial Class Dashboard1_Form
         Me.PwdPnl = New System.Windows.Forms.Panel()
         Me.TotalPwdLbl = New System.Windows.Forms.Label()
         Me.LblPWD = New System.Windows.Forms.Label()
+        Me.NextBtn = New System.Windows.Forms.PictureBox()
         Me.AgePnl = New System.Windows.Forms.Panel()
         Me.PopulationAgeLbl = New System.Windows.Forms.Label()
         Me.AgeChart = New System.Windows.Forms.DataVisualization.Charting.Chart()
@@ -52,18 +53,17 @@ Partial Class Dashboard1_Form
         Me.PopulationSexLbl = New System.Windows.Forms.Label()
         Me.SexChart = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.PopulationStatistics = New System.Windows.Forms.Label()
-        Me.NextBtn = New System.Windows.Forms.PictureBox()
         Me.FillPanel.SuspendLayout()
         Me.ResidentPnl.SuspendLayout()
         Me.HouseholdPnl.SuspendLayout()
         Me.StudentPnl.SuspendLayout()
         Me.SeniorsPnl.SuspendLayout()
         Me.PwdPnl.SuspendLayout()
+        CType(Me.NextBtn, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.AgePnl.SuspendLayout()
         CType(Me.AgeChart, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SexPnl.SuspendLayout()
         CType(Me.SexChart, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NextBtn, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'FillPanel
@@ -97,22 +97,22 @@ Partial Class Dashboard1_Form
         'TotalResidentsLbl
         '
         Me.TotalResidentsLbl.AutoSize = True
-        Me.TotalResidentsLbl.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TotalResidentsLbl.Location = New System.Drawing.Point(13, 135)
+        Me.TotalResidentsLbl.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TotalResidentsLbl.Location = New System.Drawing.Point(91, 62)
         Me.TotalResidentsLbl.Name = "TotalResidentsLbl"
-        Me.TotalResidentsLbl.Size = New System.Drawing.Size(127, 29)
+        Me.TotalResidentsLbl.Size = New System.Drawing.Size(78, 56)
         Me.TotalResidentsLbl.TabIndex = 1
-        Me.TotalResidentsLbl.Text = "Residents"
+        Me.TotalResidentsLbl.Text = "67"
         '
         'LblResidents
         '
         Me.LblResidents.AutoSize = True
-        Me.LblResidents.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblResidents.Location = New System.Drawing.Point(94, 62)
+        Me.LblResidents.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblResidents.Location = New System.Drawing.Point(30, 135)
         Me.LblResidents.Name = "LblResidents"
-        Me.LblResidents.Size = New System.Drawing.Size(78, 56)
+        Me.LblResidents.Size = New System.Drawing.Size(127, 29)
         Me.LblResidents.TabIndex = 0
-        Me.LblResidents.Text = "67"
+        Me.LblResidents.Text = "Residents"
         '
         'SummaryDashboard
         '
@@ -139,22 +139,22 @@ Partial Class Dashboard1_Form
         'TotalHouseholdLbl
         '
         Me.TotalHouseholdLbl.AutoSize = True
-        Me.TotalHouseholdLbl.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TotalHouseholdLbl.Location = New System.Drawing.Point(7, 135)
+        Me.TotalHouseholdLbl.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TotalHouseholdLbl.Location = New System.Drawing.Point(94, 62)
         Me.TotalHouseholdLbl.Name = "TotalHouseholdLbl"
-        Me.TotalHouseholdLbl.Size = New System.Drawing.Size(138, 29)
+        Me.TotalHouseholdLbl.Size = New System.Drawing.Size(78, 56)
         Me.TotalHouseholdLbl.TabIndex = 2
-        Me.TotalHouseholdLbl.Text = "Household"
+        Me.TotalHouseholdLbl.Text = "67"
         '
         'LblHousehold
         '
         Me.LblHousehold.AutoSize = True
-        Me.LblHousehold.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblHousehold.Location = New System.Drawing.Point(94, 62)
+        Me.LblHousehold.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblHousehold.Location = New System.Drawing.Point(34, 135)
         Me.LblHousehold.Name = "LblHousehold"
-        Me.LblHousehold.Size = New System.Drawing.Size(78, 56)
+        Me.LblHousehold.Size = New System.Drawing.Size(138, 29)
         Me.LblHousehold.TabIndex = 1
-        Me.LblHousehold.Text = "67"
+        Me.LblHousehold.Text = "Household" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         '
         'StudentPnl
         '
@@ -169,22 +169,22 @@ Partial Class Dashboard1_Form
         'TotalStudentLbl
         '
         Me.TotalStudentLbl.AutoSize = True
-        Me.TotalStudentLbl.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TotalStudentLbl.Location = New System.Drawing.Point(28, 135)
+        Me.TotalStudentLbl.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TotalStudentLbl.Location = New System.Drawing.Point(92, 62)
         Me.TotalStudentLbl.Name = "TotalStudentLbl"
-        Me.TotalStudentLbl.Size = New System.Drawing.Size(103, 29)
+        Me.TotalStudentLbl.Size = New System.Drawing.Size(78, 56)
         Me.TotalStudentLbl.TabIndex = 3
-        Me.TotalStudentLbl.Text = "Student"
+        Me.TotalStudentLbl.Text = "67"
         '
         'LblStudents
         '
         Me.LblStudents.AutoSize = True
-        Me.LblStudents.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblStudents.Location = New System.Drawing.Point(94, 62)
+        Me.LblStudents.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblStudents.Location = New System.Drawing.Point(18, 135)
         Me.LblStudents.Name = "LblStudents"
-        Me.LblStudents.Size = New System.Drawing.Size(78, 56)
+        Me.LblStudents.Size = New System.Drawing.Size(103, 29)
         Me.LblStudents.TabIndex = 2
-        Me.LblStudents.Text = "67"
+        Me.LblStudents.Text = "Student"
         '
         'SeniorsPnl
         '
@@ -199,22 +199,22 @@ Partial Class Dashboard1_Form
         'TotalSeniorLbl
         '
         Me.TotalSeniorLbl.AutoSize = True
-        Me.TotalSeniorLbl.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TotalSeniorLbl.Location = New System.Drawing.Point(30, 135)
+        Me.TotalSeniorLbl.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TotalSeniorLbl.Location = New System.Drawing.Point(89, 62)
         Me.TotalSeniorLbl.Name = "TotalSeniorLbl"
-        Me.TotalSeniorLbl.Size = New System.Drawing.Size(101, 29)
+        Me.TotalSeniorLbl.Size = New System.Drawing.Size(78, 56)
         Me.TotalSeniorLbl.TabIndex = 4
-        Me.TotalSeniorLbl.Text = "Seniors"
+        Me.TotalSeniorLbl.Text = "67"
         '
         'LblSenior
         '
         Me.LblSenior.AutoSize = True
-        Me.LblSenior.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblSenior.Location = New System.Drawing.Point(94, 62)
+        Me.LblSenior.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblSenior.Location = New System.Drawing.Point(22, 135)
         Me.LblSenior.Name = "LblSenior"
-        Me.LblSenior.Size = New System.Drawing.Size(78, 56)
+        Me.LblSenior.Size = New System.Drawing.Size(88, 29)
         Me.LblSenior.TabIndex = 3
-        Me.LblSenior.Text = "67"
+        Me.LblSenior.Text = "Senior"
         '
         'PwdPnl
         '
@@ -229,22 +229,32 @@ Partial Class Dashboard1_Form
         'TotalPwdLbl
         '
         Me.TotalPwdLbl.AutoSize = True
-        Me.TotalPwdLbl.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TotalPwdLbl.Location = New System.Drawing.Point(50, 135)
+        Me.TotalPwdLbl.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TotalPwdLbl.Location = New System.Drawing.Point(102, 62)
         Me.TotalPwdLbl.Name = "TotalPwdLbl"
-        Me.TotalPwdLbl.Size = New System.Drawing.Size(69, 29)
+        Me.TotalPwdLbl.Size = New System.Drawing.Size(78, 56)
         Me.TotalPwdLbl.TabIndex = 5
-        Me.TotalPwdLbl.Text = "PWD"
+        Me.TotalPwdLbl.Text = "67"
         '
         'LblPWD
         '
         Me.LblPWD.AutoSize = True
-        Me.LblPWD.Font = New System.Drawing.Font("Arial", 36.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LblPWD.Location = New System.Drawing.Point(94, 62)
+        Me.LblPWD.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LblPWD.Location = New System.Drawing.Point(25, 135)
         Me.LblPWD.Name = "LblPWD"
-        Me.LblPWD.Size = New System.Drawing.Size(78, 56)
+        Me.LblPWD.Size = New System.Drawing.Size(69, 29)
         Me.LblPWD.TabIndex = 4
-        Me.LblPWD.Text = "67"
+        Me.LblPWD.Text = "PWD"
+        '
+        'NextBtn
+        '
+        Me.NextBtn.Image = Global.Brgy_Maly_System.My.Resources.Resources.arrowRight
+        Me.NextBtn.Location = New System.Drawing.Point(1588, 367)
+        Me.NextBtn.Name = "NextBtn"
+        Me.NextBtn.Size = New System.Drawing.Size(100, 76)
+        Me.NextBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.NextBtn.TabIndex = 17
+        Me.NextBtn.TabStop = False
         '
         'AgePnl
         '
@@ -268,16 +278,16 @@ Partial Class Dashboard1_Form
         '
         'AgeChart
         '
-        ChartArea1.Name = "ChartArea1"
-        Me.AgeChart.ChartAreas.Add(ChartArea1)
-        Legend1.Name = "Legend1"
-        Me.AgeChart.Legends.Add(Legend1)
+        ChartArea5.Name = "ChartArea1"
+        Me.AgeChart.ChartAreas.Add(ChartArea5)
+        Legend5.Name = "Legend1"
+        Me.AgeChart.Legends.Add(Legend5)
         Me.AgeChart.Location = New System.Drawing.Point(86, 48)
         Me.AgeChart.Name = "AgeChart"
-        Series1.ChartArea = "ChartArea1"
-        Series1.Legend = "Legend1"
-        Series1.Name = "Series1"
-        Me.AgeChart.Series.Add(Series1)
+        Series5.ChartArea = "ChartArea1"
+        Series5.Legend = "Legend1"
+        Series5.Name = "Series1"
+        Me.AgeChart.Series.Add(Series5)
         Me.AgeChart.Size = New System.Drawing.Size(480, 320)
         Me.AgeChart.TabIndex = 0
         Me.AgeChart.Text = "Chart1"
@@ -304,16 +314,16 @@ Partial Class Dashboard1_Form
         '
         'SexChart
         '
-        ChartArea2.Name = "ChartArea1"
-        Me.SexChart.ChartAreas.Add(ChartArea2)
-        Legend2.Name = "Legend1"
-        Me.SexChart.Legends.Add(Legend2)
+        ChartArea6.Name = "ChartArea1"
+        Me.SexChart.ChartAreas.Add(ChartArea6)
+        Legend6.Name = "Legend1"
+        Me.SexChart.Legends.Add(Legend6)
         Me.SexChart.Location = New System.Drawing.Point(86, 48)
         Me.SexChart.Name = "SexChart"
-        Series2.ChartArea = "ChartArea1"
-        Series2.Legend = "Legend1"
-        Series2.Name = "Series1"
-        Me.SexChart.Series.Add(Series2)
+        Series6.ChartArea = "ChartArea1"
+        Series6.Legend = "Legend1"
+        Series6.Name = "Series1"
+        Me.SexChart.Series.Add(Series6)
         Me.SexChart.Size = New System.Drawing.Size(480, 320)
         Me.SexChart.TabIndex = 1
         Me.SexChart.Text = "Chart1"
@@ -329,16 +339,6 @@ Partial Class Dashboard1_Form
         Me.PopulationStatistics.Size = New System.Drawing.Size(319, 43)
         Me.PopulationStatistics.TabIndex = 12
         Me.PopulationStatistics.Text = "Population Statistics"
-        '
-        'NextBtn
-        '
-        Me.NextBtn.Image = Global.Brgy_Maly_System.My.Resources.Resources.arrowRight
-        Me.NextBtn.Location = New System.Drawing.Point(1588, 367)
-        Me.NextBtn.Name = "NextBtn"
-        Me.NextBtn.Size = New System.Drawing.Size(100, 76)
-        Me.NextBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.NextBtn.TabIndex = 17
-        Me.NextBtn.TabStop = False
         '
         'Dashboard1_Form
         '
@@ -363,13 +363,13 @@ Partial Class Dashboard1_Form
         Me.SeniorsPnl.PerformLayout()
         Me.PwdPnl.ResumeLayout(False)
         Me.PwdPnl.PerformLayout()
+        CType(Me.NextBtn, System.ComponentModel.ISupportInitialize).EndInit()
         Me.AgePnl.ResumeLayout(False)
         Me.AgePnl.PerformLayout()
         CType(Me.AgeChart, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SexPnl.ResumeLayout(False)
         Me.SexPnl.PerformLayout()
         CType(Me.SexChart, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NextBtn, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

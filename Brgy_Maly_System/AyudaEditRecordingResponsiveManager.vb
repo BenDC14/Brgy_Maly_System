@@ -115,59 +115,96 @@ Public Class AyudaEditRecordingResponsiveManager
     End Sub
 
     ''' <summary>
-    ''' Position Resident Information section
+    ''' Position Resident Information section.
+    ''' UPDATED: Re-applies read-only visual lock state on every layout pass
+    ''' so locked fields never accidentally revert after a resolution change.
     ''' </summary>
     Private Sub PositionResidentInfoSection(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
         Dim leftMargin As Integer = CInt(panelWidth * 0.05)
-        Dim leftFieldWidth As Integer = CInt(panelWidth * 0.364)
+        Dim leftFieldW As Integer = CInt(panelWidth * 0.364)
         Dim rightMargin As Integer = CInt(panelWidth * 0.529)
-        Dim rightFieldWidth As Integer = CInt(panelWidth * 0.364)
+        Dim rightFieldW As Integer = CInt(panelWidth * 0.364)
 
-        ' Section Title - Designer: Location(45, 105)
-        _form.ResidentInformationLbl.Location = New Point(CInt(panelWidth * 0.026), CInt(panelHeight * 0.105))
-        _form.ResidentInformationLbl.Font = New Font("Arial", 18.0F * scaleFactor, FontStyle.Bold)
+        ' ── Section Title ─────────────────────────────────────────────
+        _form.ResidentInformationLbl.Location = New Point(
+            CInt(panelWidth * 0.026), CInt(panelHeight * 0.105))
+        _form.ResidentInformationLbl.Font = New Font(
+            "Arial", 18.0F * scaleFactor, FontStyle.Bold)
 
-        ' === LEFT COLUMN ===
-        ' Resident Name - Designer: Location(80, 145), txtResidentName(85, 173), Size(618, 29)
+        ' ── LEFT COLUMN ───────────────────────────────────────────────
+
+        ' Resident Name label + field
         _form.ResidentNameLbl.Location = New Point(leftMargin, CInt(panelHeight * 0.145))
-        _form.ResidentNameLbl.Font = New Font("Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+        _form.ResidentNameLbl.Font = New Font(
+            "Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+
         _form.txtResidentName.Location = New Point(leftMargin, CInt(panelHeight * 0.172))
-        _form.txtResidentName.Size = New Size(leftFieldWidth, CInt(panelHeight * 0.029))
+        _form.txtResidentName.Size = New Size(leftFieldW, CInt(panelHeight * 0.029))
         _form.txtResidentName.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Regular)
 
-        ' Age - Designer: Location(80, 221), txtAge(85, 247)
+        ' Age label + field
         _form.AgeLbl.Location = New Point(leftMargin, CInt(panelHeight * 0.22))
-        _form.AgeLbl.Font = New Font("Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+        _form.AgeLbl.Font = New Font(
+            "Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+
         _form.txtAge.Location = New Point(leftMargin, CInt(panelHeight * 0.246))
-        _form.txtAge.Size = New Size(leftFieldWidth, CInt(panelHeight * 0.029))
+        _form.txtAge.Size = New Size(leftFieldW, CInt(panelHeight * 0.029))
         _form.txtAge.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Regular)
 
-        ' === RIGHT COLUMN ===
-        ' Sex - Designer: Location(895, 145), txtSex(900, 173), Size(618, 29)
+        ' ── RIGHT COLUMN ──────────────────────────────────────────────
+
+        ' Sex label + field
         _form.SexLbl.Location = New Point(rightMargin, CInt(panelHeight * 0.145))
-        _form.SexLbl.Font = New Font("Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+        _form.SexLbl.Font = New Font(
+            "Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+
         _form.txtSex.Location = New Point(rightMargin, CInt(panelHeight * 0.172))
-        _form.txtSex.Size = New Size(rightFieldWidth, CInt(panelHeight * 0.029))
+        _form.txtSex.Size = New Size(rightFieldW, CInt(panelHeight * 0.029))
         _form.txtSex.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Regular)
 
-        ' Category - Designer: Location(895, 221), txtCategory(900, 247)
+        ' Category label + field
         _form.CategoryLbl.Location = New Point(rightMargin, CInt(panelHeight * 0.22))
-        _form.CategoryLbl.Font = New Font("Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+        _form.CategoryLbl.Font = New Font(
+            "Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+
         _form.txtCategory.Location = New Point(rightMargin, CInt(panelHeight * 0.246))
-        _form.txtCategory.Size = New Size(rightFieldWidth, CInt(panelHeight * 0.029))
+        _form.txtCategory.Size = New Size(rightFieldW, CInt(panelHeight * 0.029))
         _form.txtCategory.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Regular)
 
-        ' === HOUSEHOLD (Centered) ===
-        ' Household - Designer: Location(501, 295), txtHousehold(506, 321), Size(618, 29)
-        Dim householdMargin As Integer = CInt(panelWidth * 0.298)
-        Dim householdWidth As Integer = CInt(panelWidth * 0.364)
+        ' ── CENTRE ROW — Household ────────────────────────────────────
+        Dim householdX As Integer = CInt(panelWidth * 0.298)
+        Dim householdW As Integer = CInt(panelWidth * 0.364)
 
-        _form.HouseholdLbl.Location = New Point(householdMargin, CInt(panelHeight * 0.294))
-        _form.HouseholdLbl.Font = New Font("Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
-        _form.txtHousehold.Location = New Point(householdMargin, CInt(panelHeight * 0.32))
-        _form.txtHousehold.Size = New Size(householdWidth, CInt(panelHeight * 0.029))
+        _form.HouseholdLbl.Location = New Point(householdX, CInt(panelHeight * 0.294))
+        _form.HouseholdLbl.Font = New Font(
+            "Arial Narrow", 15.75F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+
+        _form.txtHousehold.Location = New Point(householdX, CInt(panelHeight * 0.32))
+        _form.txtHousehold.Size = New Size(householdW, CInt(panelHeight * 0.029))
         _form.txtHousehold.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Regular)
+
+        ' ── RE-ASSERT LOCK STATE after every layout recalculation ─────
+        ' Prevents any edge case where a resolution change could reset colors.
+        Dim lockedColor As Color = Color.FromArgb(220, 220, 220)
+        Dim lockedFore As Color = Color.FromArgb(90, 90, 90)
+
+        For Each lockedCtrl As Control In New Control() {
+                _form.txtResidentName,
+                _form.txtAge,
+                _form.txtSex,
+                _form.txtCategory,
+                _form.txtHousehold}
+            If TypeOf lockedCtrl Is TextBox Then
+                Dim tb As TextBox = CType(lockedCtrl, TextBox)
+                tb.ReadOnly = True
+                tb.BackColor = lockedColor
+                tb.ForeColor = lockedFore
+                tb.TabStop = False
+                tb.Cursor = Cursors.Default
+            End If
+        Next
     End Sub
+
 
     ''' <summary>
     ''' Position horizontal divider line

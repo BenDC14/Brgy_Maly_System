@@ -6,8 +6,22 @@ Public Class Dashboard_Layout
     ' === STATIC REFERENCE TO CURRENT DASHBOARD INSTANCE ===
     Public Shared CurrentInstance As Dashboard_Layout = Nothing
 
+    ' ─── Designer baseline constants ───────────────────────────────────────────
+    ' The designer was authored against a 1920x1061 maximised window.
+    ' LeftPanel width = 255, MenuPanel height = 985.
+    ' We use these as the reference to derive proportional Y-positions.
+    Private Const ORIGINAL_MENU_HEIGHT As Integer = 985
+    Private Const MENU_BUTTON_HEIGHT As Integer = 51
+    Private Const MENU_PANEL_WIDTH As Integer = 255
+
+    ' ─── Ordered list of ALL sidebar nav buttons ───────────────────────────────
+    ' This is the single source-of-truth for the sidebar button stack.
+    ' BtnLogOut is NOT in this list; it is always pinned to the bottom.
+    Private _navButtons As Button()
+
+    ' ─── Form Load ─────────────────────────────────────────────────────────────
+
     Private Sub Dashboard_Layout_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === STORE REFERENCE TO THIS INSTANCE FIRST ===
         CurrentInstance = Me
 
         ' === WINDOW SETUP ===
@@ -18,8 +32,32 @@ Public Class Dashboard_Layout
         ApplyGradient(TopPanel, "#EDFFE9", "#FFFFFF")
         ApplyTopPanelShadow(TopPanel)
 
-        ' === SETUP ALL MENU BUTTONS ===
+        ' === BUILD ORDERED NAV BUTTON LIST ===
+        ' Order matches the intended visual top-to-bottom sequence in the sidebar.
+        _navButtons = New Button() {
+            DashboardBtn,
+            ResidentBtn,
+            BtnHousehold,
+            BtnAyudaProgram,
+            BtnReports,
+            BtnEditBarangayInfo,
+            BtnAudit,
+            BtnDatabaseBackup,
+            BtnAccounts,
+            btnAyudaAdding,
+            btnHouseholdAdding,
+            btnNewRelationshipType,
+            btnNewCategoryAdding
+        }
+
+        ' === SETUP ALL MENU BUTTONS (style + events) ===
         SetupMenuButtons()
+
+        ' === APPLY RESPONSIVE LAYOUT FOR THE FIRST TIME ===
+        ApplySidebarLayout()
+
+        ' === HOOK RESIZE TO REFLOW SIDEBAR ON EVERY SIZE CHANGE ===
+        AddHandler Me.Resize, AddressOf Dashboard_Resize
 
         ' === DISPLAY CURRENT USER NAME IN USERACCOUNT BUTTON ===
         DisplayCurrentUser()
@@ -32,12 +70,91 @@ Public Class Dashboard_Layout
         LoadContentPanel(dashboardForm)
     End Sub
 
+    ' ─── Resize handler ────────────────────────────────────────────────────────
+
+    Private Sub Dashboard_Resize(sender As Object, e As EventArgs)
+        ApplySidebarLayout()
+    End Sub
+
+    ' ─── Core responsive sidebar layout engine ─────────────────────────────────
+
     ''' <summary>
-    ''' Display current logged-in user's username in UserAccountBtn
+    ''' Recalculates and applies the Y-position of every sidebar nav button so
+    ''' they all fit inside MenuPanel at any screen height.
+    '''
+    ''' Strategy:
+    '''   1. BtnLogOut is always reserved at the very bottom (Dock = Bottom stays).
+    '''   2. The remaining vertical space is divided proportionally among the nav
+    '''      buttons using a uniform slot height.
+    '''   3. If the calculated slot height would be smaller than a minimum (36 px),
+    '''      the buttons are still positioned sequentially — the panel becomes
+    '''      scrollable in that edge case.
+    '''   4. All buttons are left-aligned and fill the panel width minus 12 px padding.
+    ''' </summary>
+    Private Sub ApplySidebarLayout()
+        ' Safety guard — panel may not be ready yet at design time
+        If MenuPanel Is Nothing OrElse _navButtons Is Nothing Then Exit Sub
+
+        Dim panelH As Integer = MenuPanel.Height   ' current height of the docked menu panel
+        Dim panelW As Integer = MenuPanel.Width    ' current width (normally = LeftPanel.Width)
+
+        If panelH < 10 OrElse panelW < 10 Then Exit Sub
+
+        ' ── Reserve space for BtnLogOut at the bottom ──────────────────────────
+        ' BtnLogOut keeps Dock = Bottom, so it auto-sits at the bottom.
+        ' We must not overlap it, so subtract its height from usable space.
+        Dim reservedBottom As Integer = MENU_BUTTON_HEIGHT + 4   ' button height + a small gap
+        Dim usableHeight As Integer = panelH - reservedBottom
+
+        ' ── How many nav buttons are there? ────────────────────────────────────
+        Dim count As Integer = _navButtons.Length
+        If count = 0 Then Exit Sub
+
+        ' ── Calculate a uniform slot height for each button ─────────────────────
+        ' A "slot" is the vertical space allocated to one button including its gap.
+        ' We add a small top margin (the first button starts a little below Y=0).
+        Dim topMargin As Integer = CInt(panelH * 0.04)    ' ~4% top padding
+        Dim available As Integer = usableHeight - topMargin
+        Dim slotHeight As Integer = CInt(available / count)
+
+        ' Enforce minimum slot so text is not crushed; clamp to button height
+        Const MIN_SLOT As Integer = 40
+        If slotHeight < MIN_SLOT Then slotHeight = MIN_SLOT
+
+        ' ── Button width: fill the panel with a left margin ────────────────────
+        Dim btnX As Integer = 8
+        Dim btnWidth As Integer = panelW - btnX - 4   ' leave 4 px right gap
+
+        ' ── Position each nav button ────────────────────────────────────────────
+        Dim currentY As Integer = topMargin
+
+        For Each btn As Button In _navButtons
+            ' Vertically centre the button inside its slot
+            Dim centreOffset As Integer = CInt((slotHeight - MENU_BUTTON_HEIGHT) / 2)
+            Dim btnY As Integer = currentY + centreOffset
+
+            btn.Location = New Point(btnX, btnY)
+            btn.Size = New Size(btnWidth, MENU_BUTTON_HEIGHT)
+            ' Pin to top-left of MenuPanel so future resizes do not drift them
+            btn.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+
+            currentY += slotHeight
+        Next
+
+        ' ── Ensure BtnLogOut keeps its Dock = Bottom and correct width ──────────
+        ' Dock handles Y automatically.  We only correct Width here because
+        ' the Dock = Bottom style already stretches it horizontally by default.
+        BtnLogOut.Dock = DockStyle.Bottom
+        BtnLogOut.Height = MENU_BUTTON_HEIGHT
+    End Sub
+
+    ' ─── Current user display ──────────────────────────────────────────────────
+
+    ''' <summary>
+    ''' Display current logged-in user's username in UserAccountBtn.
     ''' </summary>
     Private Sub DisplayCurrentUser()
         Try
-            ' === GET USERNAME FROM LOGINFORM (stored during login) ===
             If Not String.IsNullOrEmpty(LogInForm.CurrentUsername) Then
                 UserAccountBtn.Text = LogInForm.CurrentUsername
             Else
@@ -49,14 +166,20 @@ Public Class Dashboard_Layout
         End Try
     End Sub
 
+    ' ─── Button setup ──────────────────────────────────────────────────────────
+
     ''' <summary>
-    ''' Setup all menu buttons with styling ONLY
+    ''' Applies uniform styling to every sidebar + top button, then wires events.
     ''' </summary>
     Private Sub SetupMenuButtons()
-        Dim allButtons As Button() = {DashboardBtn, ResidentBtn, BtnHousehold, BtnAyudaProgram,
-                                      BtnReports, BtnEditBarangayInfo, BtnAudit,
-                                      BtnDatabaseBackup, BtnAccounts, BtnLogOut, UserAccountBtn,
-                                      btnAyudaAdding, btnHouseholdAdding}
+        ' Include BtnLogOut and UserAccountBtn in the styling pass
+        Dim allButtons As Button() = New Button() {
+            DashboardBtn, ResidentBtn, BtnHousehold, BtnAyudaProgram,
+            BtnReports, BtnEditBarangayInfo, BtnAudit,
+            BtnDatabaseBackup, BtnAccounts, BtnLogOut, UserAccountBtn,
+            btnAyudaAdding, btnHouseholdAdding,
+            btnNewRelationshipType, btnNewCategoryAdding
+        }
 
         For Each btn In allButtons
             btn.FlatStyle = FlatStyle.Flat
@@ -75,12 +198,11 @@ Public Class Dashboard_Layout
             End If
         Next
 
-        ' Setup menu button event handlers
         SetupMenuButtonEvents()
     End Sub
 
     ''' <summary>
-    ''' Setup menu button event handlers
+    ''' Wires click handlers for all menu buttons.
     ''' </summary>
     Private Sub SetupMenuButtonEvents()
         AddHandler DashboardBtn.Click, Sub() HandleMenuButtonClick(DashboardBtn, New Dashboard1_Form())
@@ -93,53 +215,78 @@ Public Class Dashboard_Layout
         AddHandler BtnDatabaseBackup.Click, Sub() HandleMenuButtonClick(BtnDatabaseBackup, New DatabaseBackupMain_Form())
         AddHandler BtnAccounts.Click, Sub() HandleMenuButtonClick(BtnAccounts, New ManageAllAccounts_Form())
 
-        ' === USER ACCOUNT BUTTON - Load current user's account ===
-        AddHandler UserAccountBtn.Click, Sub(sender, e)
-                                             Try
-                                                 SelectMenuButton(UserAccountBtn)
-                                                 Dim manageAccountForm As New ManageUserAccount_Form()
-                                                 LoadContentPanel(manageAccountForm)
-                                             Catch ex As Exception
-                                                 MsgBox("Error loading account form: " & ex.Message, MsgBoxStyle.Critical, "Error")
-                                             End Try
-                                         End Sub
+        ' User Account button — loads current user's management form
+        AddHandler UserAccountBtn.Click,
+            Sub(sender, e)
+                Try
+                    SelectMenuButton(UserAccountBtn)
+                    LoadContentPanel(New ManageUserAccount_Form())
+                Catch ex As Exception
+                    MsgBox("Error loading account form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+                End Try
+            End Sub
 
-        ' === LOGOUT BUTTON - DO NOT USE CLICK HANDLER, ONLY DIRECT EVENT ===
-        ' This is handled separately in BtnLogOut_Click to avoid recursion
+        ' Relationship Type Adding — opens as popup dialog
+        AddHandler btnNewRelationshipType.Click,
+            Sub(sender, e)
+                Try
+                    SelectMenuButton(btnNewRelationshipType)
+                    Using frm As New AddNewRelationshipType_Form()
+                        frm.ShowDialog(Me)
+                    End Using
+                Catch ex As Exception
+                    MsgBox("Error opening Relationship Type form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+                End Try
+            End Sub
+
+        ' Category Adding — opens as popup dialog
+        AddHandler btnNewCategoryAdding.Click,
+            Sub(sender, e)
+                Try
+                    SelectMenuButton(btnNewCategoryAdding)
+                    Using frm As New AddNewCategory_form()
+                        frm.ShowDialog(Me)
+                    End Using
+                Catch ex As Exception
+                    MsgBox("Error opening Category form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+                End Try
+            End Sub
+
+        ' NOTE: BtnLogOut uses a direct Handles event (BtnLogOut_Click below)
+        '       to avoid double-firing from both AddHandler and Handles.
     End Sub
 
+    ' ─── Content panel loading ─────────────────────────────────────────────────
+
     ''' <summary>
-    ''' Load any form into the CenterPanel
+    ''' Load any form into CenterPanel as a hosted child form.
     ''' </summary>
     Public Sub LoadContentPanel(ByVal whichForm As Form)
         Try
-            ' Ensure any existing form in the panel is closed and disposed of
             If CenterPanel.Controls.Count > 0 Then
-                Dim existingForm As Form = CType(CenterPanel.Controls(0), Form)
-                existingForm.Close()
-                existingForm.Dispose()
+                Dim existingForm As Form = TryCast(CenterPanel.Controls(0), Form)
+                If existingForm IsNot Nothing Then
+                    existingForm.Close()
+                    existingForm.Dispose()
+                End If
                 CenterPanel.Controls.Clear()
             End If
 
-            ' Configure the new form to be hosted within the panel
-            whichForm.TopLevel = False         ' Essential: Treats the form as a control
-            whichForm.FormBorderStyle = FormBorderStyle.None ' Remove the form's border
-            whichForm.Dock = DockStyle.Fill      ' Makes the form fill the panel
+            whichForm.TopLevel = False
+            whichForm.FormBorderStyle = FormBorderStyle.None
+            whichForm.Dock = DockStyle.Fill
 
-            ' Add the form to the panel's controls collection
             CenterPanel.Controls.Add(whichForm)
-
-            ' Show the form
             whichForm.Show()
+
         Catch ex As Exception
             MsgBox("Error loading form: " & ex.Message, MsgBoxStyle.Critical, "Error")
             Debug.WriteLine("LoadContentPanel Error: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Handle menu button click and load form
-    ''' </summary>
+    ' ─── Menu button selection / highlight ────────────────────────────────────
+
     Private Sub HandleMenuButtonClick(btn As Button, form As Form)
         Try
             SelectMenuButton(btn)
@@ -150,40 +297,38 @@ Public Class Dashboard_Layout
     End Sub
 
     ''' <summary>
-    ''' Select and highlight the active menu button
+    ''' Highlights the active sidebar button and resets all others.
     ''' </summary>
     Private Sub SelectMenuButton(btn As Button)
-        Dim allButtons As Button() = {DashboardBtn, ResidentBtn, BtnHousehold, BtnAyudaProgram,
-                                  BtnReports, BtnEditBarangayInfo, BtnAudit,
-                                  BtnDatabaseBackup, BtnAccounts, BtnLogOut, UserAccountBtn,
-                                  btnAyudaAdding, btnHouseholdAdding}
+        Dim allButtons As Button() = New Button() {
+            DashboardBtn, ResidentBtn, BtnHousehold, BtnAyudaProgram,
+            BtnReports, BtnEditBarangayInfo, BtnAudit,
+            BtnDatabaseBackup, BtnAccounts, BtnLogOut, UserAccountBtn,
+            btnAyudaAdding, btnHouseholdAdding,
+            btnNewRelationshipType, btnNewCategoryAdding
+        }
 
-        ' Reset all buttons
+        ' Reset every button
         For Each b In allButtons
             b.BackColor = Color.Transparent
-
             If b IsNot UserAccountBtn Then
-                ' Sidebar menu buttons
                 b.ForeColor = Color.White
                 b.Font = New Font("Arial", 12.0F, FontStyle.Regular)
             Else
-                ' UserAccountBtn in TopPanel
                 b.ForeColor = Color.Black
                 b.Font = New Font("Arial", 15.75F, FontStyle.Regular)
             End If
-
             b.Region = Nothing
             b.Invalidate()
         Next
 
-        ' Set active button (only if it's a sidebar button)
+        ' Highlight the clicked button
         If btn IsNot UserAccountBtn Then
             btn.BackColor = Color.FromArgb(0, 186, 15)
             btn.ForeColor = Color.White
             btn.Font = New Font("Arial", 12.0F, FontStyle.Bold)
             RoundButtonCorners(btn, 10)
         Else
-            ' UserAccountBtn stays with default styling when active
             btn.BackColor = Color.Transparent
             btn.ForeColor = Color.Black
             btn.Font = New Font("Arial", 15.75F, FontStyle.Bold)
@@ -193,28 +338,28 @@ Public Class Dashboard_Layout
         btn.Invalidate()
     End Sub
 
-    ''' <summary>
-    ''' Shared Paint handler for all menu buttons
-    ''' </summary>
+    ' ─── Paint handler for active-button shadow ───────────────────────────────
+
     Private Sub MenuButton_Paint(sender As Object, e As PaintEventArgs) _
-    Handles DashboardBtn.Paint, ResidentBtn.Paint, BtnHousehold.Paint,
-            BtnAyudaProgram.Paint, BtnReports.Paint, BtnEditBarangayInfo.Paint,
-            BtnAudit.Paint, BtnDatabaseBackup.Paint, BtnAccounts.Paint, BtnLogOut.Paint, UserAccountBtn.Paint,
-            btnAyudaAdding.Paint, btnHouseholdAdding.Paint
+        Handles DashboardBtn.Paint, ResidentBtn.Paint, BtnHousehold.Paint,
+                BtnAyudaProgram.Paint, BtnReports.Paint, BtnEditBarangayInfo.Paint,
+                BtnAudit.Paint, BtnDatabaseBackup.Paint, BtnAccounts.Paint,
+                BtnLogOut.Paint, UserAccountBtn.Paint,
+                btnAyudaAdding.Paint, btnHouseholdAdding.Paint,
+                btnNewRelationshipType.Paint, btnNewCategoryAdding.Paint
 
         Dim btn = DirectCast(sender, Button)
 
         If btn Is activeButton AndAlso btn IsNot UserAccountBtn Then
             Dim shadowPen As New Pen(Color.FromArgb(80, 0, 0, 0), 2)
-            e.Graphics.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias
             e.Graphics.DrawLine(shadowPen, btn.Width - 3, 5, btn.Width - 3, btn.Height - 5)
             e.Graphics.DrawLine(shadowPen, 5, btn.Height - 3, btn.Width - 5, btn.Height - 3)
         End If
     End Sub
 
-    ''' <summary>
-    ''' Round button corners
-    ''' </summary>
+    ' ─── Drawing / styling helpers ────────────────────────────────────────────
+
     Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
         Dim p As New GraphicsPath()
         p.AddArc(0, 0, radius, radius, 180, 90)
@@ -225,9 +370,6 @@ Public Class Dashboard_Layout
         btn.Region = New Region(p)
     End Sub
 
-    ''' <summary>
-    ''' Round panel corners
-    ''' </summary>
     Private Sub RoundPanel(ByRef pnl As Control, ByVal radius As Integer)
         Dim p As New GraphicsPath()
         p.AddArc(0, 0, radius, radius, 180, 90)
@@ -238,21 +380,18 @@ Public Class Dashboard_Layout
         pnl.Region = New Region(p)
 
         Dim panelLocal = pnl
-
-        AddHandler pnl.Resize, Sub(sender, e)
-                                   p = New GraphicsPath()
-                                   p.AddArc(0, 0, radius, radius, 180, 90)
-                                   p.AddArc(panelLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   p.AddArc(panelLocal.Width - radius, panelLocal.Height - radius, radius, radius, 0, 90)
-                                   p.AddArc(0, panelLocal.Height - radius, radius, radius, 90, 90)
-                                   p.CloseFigure()
-                                   panelLocal.Region = New Region(p)
-                               End Sub
+        AddHandler pnl.Resize,
+            Sub(sender, e)
+                Dim q As New GraphicsPath()
+                q.AddArc(0, 0, radius, radius, 180, 90)
+                q.AddArc(panelLocal.Width - radius, 0, radius, radius, 270, 90)
+                q.AddArc(panelLocal.Width - radius, panelLocal.Height - radius, radius, radius, 0, 90)
+                q.AddArc(0, panelLocal.Height - radius, radius, radius, 90, 90)
+                q.CloseFigure()
+                panelLocal.Region = New Region(q)
+            End Sub
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient
-    ''' </summary>
     Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
         Dim startColor = ColorTranslator.FromHtml(startColorHex)
         Dim endColor = ColorTranslator.FromHtml(endColorHex)
@@ -261,42 +400,40 @@ Public Class Dashboard_Layout
             New Point(0, 0),
             New Point(pnl.Width, 0),
             startColor,
-            endColor
-        )
+            endColor)
 
         Dim panelLocal = pnl
-
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+        AddHandler panelLocal.Paint,
+            Sub(sender, e)
+                e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
+            End Sub
     End Sub
 
-    ''' <summary>
-    ''' Apply top panel shadow
-    ''' </summary>
     Private Sub ApplyTopPanelShadow(card As Panel)
         card.BackColor = Color.White
         card.Padding = New Padding(0, 0, 3, 3)
 
         Dim cardLocal = card
-
-        AddHandler cardLocal.Paint, Sub(sender, e)
-                                        Dim shadowPen As New Pen(Color.FromArgb(100, 150, 150, 150), 3)
-                                        e.Graphics.DrawLine(shadowPen, cardLocal.Width - 3, 5, cardLocal.Width - 3, cardLocal.Height - 5)
-                                        e.Graphics.DrawLine(shadowPen, 5, cardLocal.Height - 3, cardLocal.Width - 5, cardLocal.Height - 3)
-                                    End Sub
+        AddHandler cardLocal.Paint,
+            Sub(sender, e)
+                Dim shadowPen As New Pen(Color.FromArgb(100, 150, 150, 150), 3)
+                e.Graphics.DrawLine(shadowPen, cardLocal.Width - 3, 5, cardLocal.Width - 3, cardLocal.Height - 5)
+                e.Graphics.DrawLine(shadowPen, 5, cardLocal.Height - 3, cardLocal.Width - 5, cardLocal.Height - 3)
+            End Sub
     End Sub
 
-    ' ===== INDIVIDUAL BUTTON CLICK HANDLERS =====
-    ' Note: Most buttons use the event handler setup in SetupMenuButtonEvents()
-    ' Only unique handlers are defined here
+    ' ─── Individual button click handlers ─────────────────────────────────────
+    ' (Only buttons that need direct Handles wiring remain here.
+    '  All others are AddHandler-wired in SetupMenuButtonEvents.)
 
     ''' <summary>
-    ''' Logout button - Direct click handler to avoid recursion
+    ''' Logout button — uses direct Handles to avoid double-firing.
     ''' </summary>
     Private Sub BtnLogOut_Click(sender As Object, e As EventArgs) Handles BtnLogOut.Click
-        If MsgBox("Are you sure you want to logout?", MsgBoxStyle.Question Or MsgBoxStyle.YesNo, "Confirm Logout") = MsgBoxResult.Yes Then
-            ' === CLEAR USER INFO ===
+        If MsgBox("Are you sure you want to logout?",
+                  MsgBoxStyle.Question Or MsgBoxStyle.YesNo,
+                  "Confirm Logout") = MsgBoxResult.Yes Then
+
             LogInForm.CurrentUserID = -1
             LogInForm.CurrentUsername = ""
             LogInForm.CurrentFirstName = ""
@@ -304,29 +441,47 @@ Public Class Dashboard_Layout
             LogInForm.CurrentUserRole = ""
             LogInForm.AccessibleForms.Clear()
 
-            ' === CLOSE DASHBOARD ===
             Me.Close()
-
-            ' === SHOW LOGIN FORM ===
             LogInForm.Show()
         End If
     End Sub
 
     ''' <summary>
-    ''' Ayuda Adding button click - Navigate to AyudaAdd_Form
+    ''' Ayuda Adding — uses direct Handles for LoadContentPanel navigation.
     ''' </summary>
     Private Sub btnAyudaAdding_Click(sender As Object, e As EventArgs) Handles btnAyudaAdding.Click
-        Dim addAyudaProgramForm As New AyudaAdd_Form()
-        addAyudaProgramForm.ShowDialog()
+        SelectMenuButton(btnAyudaAdding)
+        LoadContentPanel(New AyudaAdd_Form())
     End Sub
 
     ''' <summary>
-    ''' Household Adding button click - Navigate to HouseholdAdding_Form
+    ''' Household Adding — uses direct Handles for LoadContentPanel navigation.
     ''' </summary>
     Private Sub btnHouseholdAdding_Click(sender As Object, e As EventArgs) Handles btnHouseholdAdding.Click
         SelectMenuButton(btnHouseholdAdding)
-        Dim householdAddingForm As New HouseholdAdding_Form()
-        LoadContentPanel(householdAddingForm)
+        LoadContentPanel(New HouseholdAdding_Form())
+    End Sub
+
+    ''' <summary>
+    ''' Relationship Type Adding — direct Handles; opens as a modal dialog only.
+    ''' (AddHandler in SetupMenuButtonEvents also handles this button —
+    '''  remove one of the two wiring points if double-firing occurs.)
+    ''' </summary>
+    Private Sub btnNewRelationshipType_Click(sender As Object, e As EventArgs) Handles btnNewRelationshipType.Click
+        SelectMenuButton(btnNewRelationshipType)
+        Using frm As New AddNewRelationshipType_Form()
+            frm.ShowDialog(Me)
+        End Using
+    End Sub
+
+    ''' <summary>
+    ''' Category Adding — direct Handles; opens as a modal dialog only.
+    ''' </summary>
+    Private Sub btnNewCategoryAdding_Click(sender As Object, e As EventArgs) Handles btnNewCategoryAdding.Click
+        SelectMenuButton(btnNewCategoryAdding)
+        Using frm As New AddNewCategory_form()
+            frm.ShowDialog(Me)
+        End Using
     End Sub
 
 End Class

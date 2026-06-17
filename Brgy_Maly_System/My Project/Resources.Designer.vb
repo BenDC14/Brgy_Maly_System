@@ -113,6 +113,16 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property bonds() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("bonds", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property closeeye() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("closeeye", resourceCulture)
@@ -146,6 +156,16 @@ Namespace My.Resources
         Friend ReadOnly Property database_management() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("database-management", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property demographic() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("demographic", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -196,6 +216,16 @@ Namespace My.Resources
         Friend ReadOnly Property family__1_() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("family (1)", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property family_relationship() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("family relationship", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

@@ -153,7 +153,14 @@ Public Class HouseholdEditLogic
                     householdCmd.ExecuteNonQuery()
                 End Using
 
+                ' === LOG AUDIT TRAIL ===
+                GlobalAuditLogger.Log("HouseholdEdit_Form", "UPDATE HOUSEHOLD",
+                    LogInForm.CurrentUsername & " updated household address (Household ID: " & data.HouseholdID & ")",
+                    connection, transaction)
+
                 transaction.Commit()
+
+
                 result.IsSuccess = True
                 result.Message = "Household updated successfully."
                 result.ErrorCode = 0

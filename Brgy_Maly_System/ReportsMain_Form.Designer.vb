@@ -22,6 +22,7 @@ Partial Class ReportsMain_Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ReportsMain_Form))
         Me.FillPanel = New System.Windows.Forms.Panel()
         Me.btnViewGeneratedReports = New System.Windows.Forms.Button()
         Me.btnGenerate = New System.Windows.Forms.Button()
@@ -42,6 +43,9 @@ Partial Class ReportsMain_Form
         Me.LinePnl = New System.Windows.Forms.Panel()
         Me.lblGenerateReports = New System.Windows.Forms.Label()
         Me.dgvReports = New System.Windows.Forms.DataGridView()
+        Me.PrintDocuReports = New System.Drawing.Printing.PrintDocument()
+        Me.PrintPreviewDialogReports = New System.Windows.Forms.PrintPreviewDialog()
+        Me.PrintDialogReports = New System.Windows.Forms.PrintDialog()
         Me.FillPanel.SuspendLayout()
         CType(Me.dgvReports, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -274,6 +278,20 @@ Partial Class ReportsMain_Form
         Me.dgvReports.Size = New System.Drawing.Size(1676, 442)
         Me.dgvReports.TabIndex = 8
         '
+        'PrintPreviewDialogReports
+        '
+        Me.PrintPreviewDialogReports.AutoScrollMargin = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogReports.AutoScrollMinSize = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogReports.ClientSize = New System.Drawing.Size(400, 300)
+        Me.PrintPreviewDialogReports.Enabled = True
+        Me.PrintPreviewDialogReports.Icon = CType(resources.GetObject("PrintPreviewDialogReports.Icon"), System.Drawing.Icon)
+        Me.PrintPreviewDialogReports.Name = "PrintPreviewDialogReports"
+        Me.PrintPreviewDialogReports.Visible = False
+        '
+        'PrintDialogReports
+        '
+        Me.PrintDialogReports.UseEXDialog = True
+        '
         'ReportsMain_Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -314,4 +332,7 @@ Partial Class ReportsMain_Form
     Friend WithEvents btnGenerate As Button
     Friend WithEvents cbDownloadType As ComboBox
     Friend WithEvents lblDownloadType As Label
+    Friend WithEvents PrintDocuReports As Printing.PrintDocument
+    Friend WithEvents PrintPreviewDialogReports As PrintPreviewDialog
+    Friend WithEvents PrintDialogReports As PrintDialog
 End Class

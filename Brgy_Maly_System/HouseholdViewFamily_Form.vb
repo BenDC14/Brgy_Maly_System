@@ -1,109 +1,167 @@
-﻿Imports System.Drawing.Drawing2D
-
-Public Class HouseholdViewFamily_Form
-    ' === UI State ===
+﻿Public Class HouseholdViewFamily_Form
     Private viewingHouseholdId As Integer = -1
-
-    ' === Responsive Manager Instance ===
+    Private selectedFamilyId As Integer = -1
     Private responsiveManager As HouseholdViewFamilyResponsiveManager
+    Private familyLogic As New HouseholdViewFamilyLogic()
 
-    ''' <summary>
-    ''' Constructor - Accept household ID for viewing families
-    ''' </summary>
     Public Sub New(Optional householdId As Integer = -1)
         InitializeComponent()
         viewingHouseholdId = householdId
     End Sub
 
     Private Sub HouseholdViewFamily_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
-        UIUtilities.ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
-
-        ' === Apply Button Styling ===
-        UIUtilities.RoundButtonCorners(btnEditFamily, 20)
-        UIUtilities.RoundButtonCorners(btnBack, 20)
-
-        ' === Initialize Responsive Manager ===
-        responsiveManager = New HouseholdViewFamilyResponsiveManager(Me)
-        responsiveManager.Initialize()
-
-        ' === Load Families for this Household ===
-        LoadFamiliesForHousehold()
-    End Sub
-
-    ''' <summary>
-    ''' Load families for the selected household
-    ''' </summary>
-    Private Sub LoadFamiliesForHousehold()
         Try
-            If viewingHouseholdId > 0 Then
-                ' TODO: Call logic to load families for this household
-                ' Dim families = familyLogic.GetFamiliesByHousehold(viewingHouseholdId)
-                ' dgvFamilies.DataSource = families
-            Else
-                MsgBox("No household selected.", MsgBoxStyle.Information, "Info")
-            End If
+            UIUtilities.ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
+
+            UIUtilities.RoundButtonCorners(btnEditFamily, 20)
+            UIUtilities.RoundButtonCorners(btnBack, 20)
+
+            responsiveManager = New HouseholdViewFamilyResponsiveManager(Me)
+            responsiveManager.Initialize()
+
+            ConfigureFamilyHeadsGrid()
+            LoadFamiliesForHousehold()
+
         Catch ex As Exception
-            MsgBox("Error loading families: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox("Error loading view family form: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient background to panel
-    ''' </summary>
-    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
-        Dim startColor = ColorTranslator.FromHtml(startColorHex)
-        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+    Private Sub ConfigureFamilyHeadsGrid()
+        dgvFamilyHeads.AutoGenerateColumns = False
+        dgvFamilyHeads.Columns.Clear()
+        dgvFamilyHeads.AllowUserToAddRows = False
+        dgvFamilyHeads.AllowUserToDeleteRows = False
+        dgvFamilyHeads.AllowUserToResizeRows = False
+        dgvFamilyHeads.RowHeadersVisible = False
+        dgvFamilyHeads.ReadOnly = True
+        dgvFamilyHeads.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvFamilyHeads.MultiSelect = False
+        dgvFamilyHeads.EnableHeadersVisualStyles = False
+        dgvFamilyHeads.BackgroundColor = Color.FromArgb(220, 220, 220)
+        dgvFamilyHeads.GridColor = Color.FromArgb(180, 180, 180)
+        dgvFamilyHeads.ColumnHeadersHeight = 35
+        dgvFamilyHeads.RowTemplate.Height = 32
+        dgvFamilyHeads.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
 
-        Dim brush As New LinearGradientBrush(
-            New Point(0, 0),
-            New Point(pnl.Width, 0),
-            startColor,
-            endColor
-        )
+        dgvFamilyHeads.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(60, 137, 66)
+        dgvFamilyHeads.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        dgvFamilyHeads.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 11, FontStyle.Bold)
+        dgvFamilyHeads.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
 
-        Dim panelLocal = pnl
+        dgvFamilyHeads.DefaultCellStyle.Font = New Font("Arial", 10, FontStyle.Regular)
+        dgvFamilyHeads.DefaultCellStyle.ForeColor = Color.Black
+        dgvFamilyHeads.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240)
+        dgvFamilyHeads.DefaultCellStyle.SelectionBackColor = Color.FromArgb(100, 200, 120)
+        dgvFamilyHeads.DefaultCellStyle.SelectionForeColor = Color.Black
 
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+        dgvFamilyHeads.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(225, 225, 225)
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "FamilyId",
+            .HeaderText = "Family ID",
+            .DataPropertyName = "FamilyId",
+            .Width = 90
+        })
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "ResidentId",
+            .HeaderText = "Resident ID",
+            .DataPropertyName = "ResidentId",
+            .Visible = False
+        })
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "FamilyName",
+            .HeaderText = "Family Name",
+            .DataPropertyName = "FamilyName",
+            .Width = 180
+        })
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "FamilyHead",
+            .HeaderText = "Family Head",
+            .DataPropertyName = "FamilyHead",
+            .Width = 250
+        })
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "HouseholdNumber",
+            .HeaderText = "Household Number",
+            .DataPropertyName = "HouseholdNumber",
+            .Width = 160
+        })
+
+        dgvFamilyHeads.Columns.Add(New DataGridViewTextBoxColumn With {
+            .Name = "TotalFamilyMembers",
+            .HeaderText = "Total Members",
+            .DataPropertyName = "TotalFamilyMembers",
+            .Width = 130
+        })
+
+        AddHandler dgvFamilyHeads.SelectionChanged, AddressOf dgvFamilyHeads_SelectionChanged
+        AddHandler dgvFamilyHeads.CellDoubleClick, AddressOf dgvFamilyHeads_CellDoubleClick
     End Sub
 
-    ''' <summary>
-    ''' Apply rounded corners to button
-    ''' </summary>
-    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
-        Dim p As New GraphicsPath()
-        p.AddArc(0, 0, radius, radius, 180, 90)
-        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
-        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
-        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
-        p.CloseFigure()
-        btn.Region = New Region(p)
+    Private Sub LoadFamiliesForHousehold()
+        Try
+            Dim dataTable As DataTable = familyLogic.GetFamilyHeads(viewingHouseholdId)
+            dgvFamilyHeads.DataSource = dataTable
+            selectedFamilyId = -1
 
-        Dim btnLocal = btn
-
-        AddHandler btn.Resize, Sub(s, args)
-                                   Dim newPath As New GraphicsPath()
-                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
-                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
-                                   newPath.CloseFigure()
-                                   btnLocal.Region = New Region(newPath)
-                               End Sub
+        Catch ex As Exception
+            MsgBox("Error loading family heads: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Edit Family button click
-    ''' </summary>
+    Private Sub dgvFamilyHeads_SelectionChanged(sender As Object, e As EventArgs)
+        Try
+            If dgvFamilyHeads.SelectedRows.Count = 0 Then
+                selectedFamilyId = -1
+                Return
+            End If
+
+            selectedFamilyId = CInt(dgvFamilyHeads.SelectedRows(0).Cells("FamilyId").Value)
+
+        Catch ex As Exception
+            selectedFamilyId = -1
+            Debug.WriteLine("dgvFamilyHeads_SelectionChanged Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvFamilyHeads_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex < 0 Then Return
+
+        dgvFamilyHeads.ClearSelection()
+        dgvFamilyHeads.Rows(e.RowIndex).Selected = True
+        selectedFamilyId = CInt(dgvFamilyHeads.Rows(e.RowIndex).Cells("FamilyId").Value)
+
+        OpenEditFamilyForm()
+    End Sub
+
     Private Sub btnEditFamily_Click(sender As Object, e As EventArgs) Handles btnEditFamily.Click
-        ' TODO: Implement edit family functionality
+        OpenEditFamilyForm()
     End Sub
 
-    ''' <summary>
-    ''' Back button click
-    ''' </summary>
+    Private Sub OpenEditFamilyForm()
+        Try
+            If selectedFamilyId <= 0 Then
+                MsgBox("Please select a family head first.", MsgBoxStyle.Information, "Selection Required")
+                Return
+            End If
+
+            If Dashboard_Layout.CurrentInstance IsNot Nothing Then
+                Dim householdEditFamilyForm As New HouseholdEditFamily_Form(selectedFamilyId)
+                Dashboard_Layout.CurrentInstance.LoadContentPanel(householdEditFamilyForm)
+            Else
+                MsgBox("Error: Dashboard not initialized.", MsgBoxStyle.Critical, "Error")
+            End If
+
+        Catch ex As Exception
+            MsgBox("Error loading edit family form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
+    End Sub
+
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
@@ -115,30 +173,11 @@ Public Class HouseholdViewFamily_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         If responsiveManager IsNot Nothing Then
             responsiveManager.Cleanup()
         End If
+
         MyBase.OnFormClosing(e)
     End Sub
-
-    ' ========================================
-    ' TODO: Add your business logic methods here
-    ' ========================================
-    ' - Load family/household information from database
-    ' - Load family members/heads into dgvFamilyHeads
-    ' - Display family details based on selected household
-    ' - Handle DataGridView row selection
-    ' - Edit Family button:
-    '   - Navigate to HouseholdEditFamily_Form
-    '   - Pass selected family ID/information
-    ' - Back to Main button:
-    '   - Navigate to HouseholdMain_Form
-    ' - Refresh DataGridView after edits
-    ' - DataGridView columns: ID, Name, Relationship, Status, Date Added, etc.
-    ' ========================================
-
 End Class

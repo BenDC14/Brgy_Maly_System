@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class AyudaMain_Form
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,17 +20,16 @@ Partial Class AyudaMain_Form
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.FillPanel = New System.Windows.Forms.Panel()
-        Me.btnArchieve = New System.Windows.Forms.Button()
-        Me.btnEdit = New System.Windows.Forms.Button()
         Me.dgvResidentAyudas = New System.Windows.Forms.DataGridView()
         Me.btnSearch = New System.Windows.Forms.Button()
         Me.txtSearch = New System.Windows.Forms.TextBox()
         Me.lblSearch = New System.Windows.Forms.Label()
         Me.btnRecordNewAyuda = New System.Windows.Forms.Button()
         Me.AyudaInfolbl = New System.Windows.Forms.Label()
+        Me.btnAudit = New System.Windows.Forms.Button()
         Me.FillPanel.SuspendLayout()
         CType(Me.dgvResidentAyudas, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -38,8 +37,7 @@ Partial Class AyudaMain_Form
         'FillPanel
         '
         Me.FillPanel.BackColor = System.Drawing.Color.Transparent
-        Me.FillPanel.Controls.Add(Me.btnArchieve)
-        Me.FillPanel.Controls.Add(Me.btnEdit)
+        Me.FillPanel.Controls.Add(Me.btnAudit)
         Me.FillPanel.Controls.Add(Me.dgvResidentAyudas)
         Me.FillPanel.Controls.Add(Me.btnSearch)
         Me.FillPanel.Controls.Add(Me.txtSearch)
@@ -51,32 +49,6 @@ Partial Class AyudaMain_Form
         Me.FillPanel.Name = "FillPanel"
         Me.FillPanel.Size = New System.Drawing.Size(1700, 1004)
         Me.FillPanel.TabIndex = 0
-        '
-        'btnArchieve
-        '
-        Me.btnArchieve.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnArchieve.FlatAppearance.BorderSize = 0
-        Me.btnArchieve.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnArchieve.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnArchieve.Location = New System.Drawing.Point(1571, 191)
-        Me.btnArchieve.Name = "btnArchieve"
-        Me.btnArchieve.Size = New System.Drawing.Size(100, 29)
-        Me.btnArchieve.TabIndex = 7
-        Me.btnArchieve.Text = "Archieve"
-        Me.btnArchieve.UseVisualStyleBackColor = False
-        '
-        'btnEdit
-        '
-        Me.btnEdit.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnEdit.FlatAppearance.BorderSize = 0
-        Me.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnEdit.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnEdit.Location = New System.Drawing.Point(1465, 191)
-        Me.btnEdit.Name = "btnEdit"
-        Me.btnEdit.Size = New System.Drawing.Size(85, 29)
-        Me.btnEdit.TabIndex = 6
-        Me.btnEdit.Text = "Edit"
-        Me.btnEdit.UseVisualStyleBackColor = False
         '
         'dgvResidentAyudas
         '
@@ -128,7 +100,7 @@ Partial Class AyudaMain_Form
         Me.btnRecordNewAyuda.Location = New System.Drawing.Point(12, 88)
         Me.btnRecordNewAyuda.Name = "btnRecordNewAyuda"
         Me.btnRecordNewAyuda.Size = New System.Drawing.Size(226, 45)
-        Me.btnRecordNewAyuda.TabIndex = 2
+        Me.btnRecordNewAyuda.TabIndex = 1
         Me.btnRecordNewAyuda.Text = "Record New Ayuda"
         Me.btnRecordNewAyuda.UseVisualStyleBackColor = False
         '
@@ -141,6 +113,19 @@ Partial Class AyudaMain_Form
         Me.AyudaInfolbl.Size = New System.Drawing.Size(258, 32)
         Me.AyudaInfolbl.TabIndex = 0
         Me.AyudaInfolbl.Text = "Ayuda Information"
+        '
+        'btnAudit
+        '
+        Me.btnAudit.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
+        Me.btnAudit.FlatAppearance.BorderSize = 0
+        Me.btnAudit.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnAudit.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnAudit.Location = New System.Drawing.Point(279, 88)
+        Me.btnAudit.Name = "btnAudit"
+        Me.btnAudit.Size = New System.Drawing.Size(226, 45)
+        Me.btnAudit.TabIndex = 2
+        Me.btnAudit.Text = "Audit Ayuda"
+        Me.btnAudit.UseVisualStyleBackColor = False
         '
         'AyudaMain_Form
         '
@@ -167,7 +152,6 @@ Partial Class AyudaMain_Form
     Friend WithEvents btnSearch As Button
     Friend WithEvents txtSearch As TextBox
     Friend WithEvents lblSearch As Label
-    Friend WithEvents btnEdit As Button
     Friend WithEvents dgvResidentAyudas As DataGridView
-    Friend WithEvents btnArchieve As Button
+    Friend WithEvents btnAudit As Button
 End Class

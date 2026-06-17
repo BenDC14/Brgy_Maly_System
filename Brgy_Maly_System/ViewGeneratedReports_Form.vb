@@ -1,71 +1,87 @@
 ﻿Imports System.Drawing.Drawing2D
 
 Public Class ViewGeneratedReports_Form
-    ' === Responsive Manager Instance ===
     Private responsiveManager As ViewGeneratedReportsResponsiveManager
+    Private generatedReportsLogic As New ViewGeneratedReportsLogic()
 
     Private Sub ViewGeneratedReports_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
         ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
 
-        ' === Apply Button Styling (Once - never reapply) ===
         RoundButtonCorners(btnSearch, 20)
         RoundButtonCorners(btnBack, 20)
 
-        ' === Initialize Responsive Manager ===
         responsiveManager = New ViewGeneratedReportsResponsiveManager(Me)
         responsiveManager.Initialize()
+
+        ConfigureDataGridView()
+        LoadGeneratedReports()
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient background to panel
-    ''' </summary>
-    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
-        Dim startColor = ColorTranslator.FromHtml(startColorHex)
-        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+    Private Sub ConfigureDataGridView()
+        dgvReports.AutoGenerateColumns = True
+        dgvReports.AllowUserToAddRows = False
+        dgvReports.AllowUserToDeleteRows = False
+        dgvReports.AllowUserToResizeRows = False
+        dgvReports.ReadOnly = True
+        dgvReports.RowHeadersVisible = False
+        dgvReports.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvReports.MultiSelect = False
+        dgvReports.EnableHeadersVisualStyles = False
 
-        Dim brush As New LinearGradientBrush(
-            New Point(0, 0),
-            New Point(pnl.Width, 0),
-            startColor,
-            endColor
-        )
+        dgvReports.BackgroundColor = Color.FromArgb(220, 220, 220)
+        dgvReports.GridColor = Color.FromArgb(180, 180, 180)
+        dgvReports.ColumnHeadersHeight = 35
+        dgvReports.RowTemplate.Height = 30
 
-        Dim panelLocal = pnl
+        dgvReports.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(60, 137, 66)
+        dgvReports.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        dgvReports.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 11, FontStyle.Bold)
+        dgvReports.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
 
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+        dgvReports.DefaultCellStyle.Font = New Font("Arial", 10)
+        dgvReports.DefaultCellStyle.ForeColor = Color.Black
+        dgvReports.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240)
+        dgvReports.DefaultCellStyle.SelectionBackColor = Color.FromArgb(100, 200, 120)
+        dgvReports.DefaultCellStyle.SelectionForeColor = Color.Black
+
+        dgvReports.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(225, 225, 225)
     End Sub
 
-    ''' <summary>
-    ''' Apply rounded corners to button (with resize handler)
-    ''' </summary>
-    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
-        Dim p As New GraphicsPath()
-        p.AddArc(0, 0, radius, radius, 180, 90)
-        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
-        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
-        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
-        p.CloseFigure()
-        btn.Region = New Region(p)
-
-        Dim btnLocal = btn
-
-        AddHandler btn.Resize, Sub(s, args)
-                                   Dim newPath As New GraphicsPath()
-                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
-                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
-                                   newPath.CloseFigure()
-                                   btnLocal.Region = New Region(newPath)
-                               End Sub
+    Private Sub LoadGeneratedReports()
+        Try
+            dgvReports.DataSource = generatedReportsLogic.GetGeneratedReports()
+            HideTechnicalColumns()
+        Catch ex As Exception
+            MsgBox("Error loading generated reports: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Navigate back to Reports Main form
-    ''' </summary>
+    Private Sub HideTechnicalColumns()
+        If dgvReports.Columns.Contains("ReportTypeId") Then dgvReports.Columns("ReportTypeId").Visible = False
+        If dgvReports.Columns.Contains("ReportsSubTypeId") Then dgvReports.Columns("ReportsSubTypeId").Visible = False
+        If dgvReports.Columns.Contains("GeneratedBy") Then dgvReports.Columns("GeneratedBy").Visible = False
+
+        If dgvReports.Columns.Contains("ReportTypeName") Then dgvReports.Columns("ReportTypeName").HeaderText = "Report Type"
+        If dgvReports.Columns.Contains("ReportSubTypeName") Then dgvReports.Columns("ReportSubTypeName").HeaderText = "Report Sub Type"
+        If dgvReports.Columns.Contains("GeneratedByUsername") Then dgvReports.Columns("GeneratedByUsername").HeaderText = "Generated By"
+        If dgvReports.Columns.Contains("Date") Then dgvReports.Columns("Date").HeaderText = "Generated Date"
+        If dgvReports.Columns.Contains("FileName") Then dgvReports.Columns("FileName").HeaderText = "File Name"
+        If dgvReports.Columns.Contains("FilePath") Then dgvReports.Columns("FilePath").HeaderText = "File Path"
+    End Sub
+
+    Private Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
+        Try
+            If String.IsNullOrWhiteSpace(txtSearch.Text) Then
+                LoadGeneratedReports()
+            Else
+                dgvReports.DataSource = generatedReportsLogic.SearchGeneratedReports(txtSearch.Text.Trim())
+                HideTechnicalColumns()
+            End If
+        Catch ex As Exception
+            MsgBox("Error searching generated reports: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
+    End Sub
+
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
@@ -76,33 +92,51 @@ Public Class ViewGeneratedReports_Form
             End If
         Catch ex As Exception
             MsgBox("Error loading form: " & ex.Message, MsgBoxStyle.Critical, "Error")
-            Debug.WriteLine("btnView_Click Error: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
+    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
+        Dim startColor = ColorTranslator.FromHtml(startColorHex)
+        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+
+        AddHandler pnl.Paint,
+            Sub(sender, e)
+                Using brush As New LinearGradientBrush(New Point(0, 0), New Point(pnl.Width, 0), startColor, endColor)
+                    e.Graphics.FillRectangle(brush, pnl.ClientRectangle)
+                End Using
+            End Sub
+    End Sub
+
+    Private Sub RoundButtonCorners(btn As Button, ByVal radius As Integer)
+        ApplyButtonRoundedRegion(btn, radius)
+
+        AddHandler btn.Resize,
+        Sub(s, args)
+            ApplyButtonRoundedRegion(btn, radius)
+        End Sub
+    End Sub
+
+    Private Sub ApplyButtonRoundedRegion(btn As Button, radius As Integer)
+        If btn Is Nothing Then Return
+        If btn.Width <= 0 OrElse btn.Height <= 0 Then Return
+
+        Using p As New GraphicsPath()
+            p.AddArc(0, 0, radius, radius, 180, 90)
+            p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
+            p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
+            p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
+            p.CloseFigure()
+
+            btn.Region = New Region(p)
+        End Using
+    End Sub
+
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         If responsiveManager IsNot Nothing Then
             responsiveManager.Cleanup()
         End If
+
         MyBase.OnFormClosing(e)
     End Sub
-
-    ' ========================================
-    ' TODO: Add your business logic methods here
-    ' ========================================
-    ' - Search button click handler
-    ' - Load generated reports from database/file system
-    ' - Filter DataGridView by search criteria
-    ' - Display report metadata (name, date, type, size)
-    ' - DataGridView selection changed handler
-    ' - Double-click to open/view report
-    ' - Context menu for report actions (Open, Delete, Export)
-    ' - Refresh reports list
-    ' - Sort by date, name, type
-    ' - Show report preview on selection
-    ' ========================================
 
 End Class

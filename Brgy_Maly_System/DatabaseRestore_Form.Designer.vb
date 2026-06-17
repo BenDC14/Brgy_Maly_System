@@ -167,6 +167,7 @@ Partial Class DatabaseRestore_Form
         Me.txtBackupDate.Name = "txtBackupDate"
         Me.txtBackupDate.Size = New System.Drawing.Size(1435, 29)
         Me.txtBackupDate.TabIndex = 4
+        Me.txtBackupDate.Text = " "
         '
         'lblBackupDate
         '

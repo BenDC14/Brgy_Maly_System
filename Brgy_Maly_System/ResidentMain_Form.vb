@@ -1,48 +1,37 @@
 ﻿Imports System.Drawing.Drawing2D
 
 Public Class ResidentMain_Form
-    ' === Service Layer (Business Logic) ===
+    Private Const RESIDENT_FORM_CLASS As String = "ResidentMain_Form"
+
     Private residentLogic As New ResidentMainLogic()
-
-    ' === Responsive Manager Instance ===
     Private responsiveManager As ResidentMainResponsiveManager
-
-    ' === UI State ===
     Private selectedResidentId As Integer = -1
 
     Private Sub ResidentMain_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
         UIUtilities.ApplyGradient(fillpanel, "#EDFFE9", "#FFFFFF")
-
-        ' === Apply Button Styling - Using UIUtilities ===
         UIUtilities.RoundButtonCorners(btnSearch, 20)
         UIUtilities.RoundButtonCorners(btnAddNewResident, 20)
 
-        ' === Initialize Responsive Manager ===
         responsiveManager = New ResidentMainResponsiveManager(Me)
         responsiveManager.Initialize()
 
-        ' === Configure DataGridView ===
         ConfigureDataGridView()
-
-        ' === Load All Residents ===
         LoadAllResidents()
+        ApplyPermissions()
     End Sub
 
-    ''' <summary>
-    ''' Configure DataGridView with modern styling using DataGridViewHelper and single Action column
-    ''' </summary>
+    Private Sub ApplyPermissions()
+        btnAddNewResident.Visible = LogInForm.CanAdd(RESIDENT_FORM_CLASS)
+    End Sub
+
     Private Sub ConfigureDataGridView()
-        ' === Apply standard styling using DataGridViewHelper ===
         DataGridViewHelper.ApplyStandardStyling(dgvResidents)
 
-        ' === Configure advanced properties ===
         dgvResidents.AllowUserToResizeRows = False
         dgvResidents.EnableHeadersVisualStyles = False
         dgvResidents.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvResidents.MultiSelect = False
 
-        ' === Modern styling overrides ===
         With dgvResidents
             .BackgroundColor = Color.White
             .BorderStyle = BorderStyle.None
@@ -52,7 +41,6 @@ Public Class ResidentMain_Form
             .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
         End With
 
-        ' === Column Headers Styling ===
         With dgvResidents.ColumnHeadersDefaultCellStyle
             .BackColor = Color.FromArgb(60, 137, 66)
             .ForeColor = Color.White
@@ -62,7 +50,6 @@ Public Class ResidentMain_Form
             .SelectionBackColor = Color.FromArgb(60, 137, 66)
         End With
 
-        ' === Row Styling ===
         With dgvResidents.DefaultCellStyle
             .Font = New Font("Arial", 10, FontStyle.Regular)
             .ForeColor = Color.FromArgb(64, 64, 64)
@@ -73,58 +60,41 @@ Public Class ResidentMain_Form
             .SelectionForeColor = Color.FromArgb(64, 64, 64)
         End With
 
-        ' === Alternate Row Color ===
         With dgvResidents.AlternatingRowsDefaultCellStyle
             .BackColor = Color.FromArgb(248, 248, 248)
             .SelectionBackColor = Color.FromArgb(200, 230, 201)
         End With
 
-        ' === ADD DATA COLUMNS USING DataGridViewHelper ===
-        ' Hidden ID Column
         DataGridViewHelper.AddTextColumn(dgvResidents, "ResidentId", "", "ResidentId", 0, True)
         dgvResidents.Columns("ResidentId").Visible = False
 
-        ' First Name
         DataGridViewHelper.AddTextColumn(dgvResidents, "FirstName", "First Name", "FirstName", 110, True)
-
-        ' Last Name
         DataGridViewHelper.AddTextColumn(dgvResidents, "LastName", "Last Name", "LastName", 110, True)
-
-        ' Sex/Gender
         DataGridViewHelper.AddTextColumn(dgvResidents, "Sex", "Gender", "Sex", 80, True)
-
-        ' Civil Status
         DataGridViewHelper.AddTextColumn(dgvResidents, "CivilStatus", "Civil Status", "CivilStatus", 100, True)
-
-        ' Contact Number
         DataGridViewHelper.AddTextColumn(dgvResidents, "ContactNumber", "Contact #", "ContactNumber", 120, True)
-
-        ' Household Number
         DataGridViewHelper.AddTextColumn(dgvResidents, "HouseholdNumber", "Household #", "HouseholdNumber", 110, True)
 
-        ' === SINGLE ACTION COLUMN with all actions ===
         Dim actionColumn As New DataGridViewButtonColumn With {
             .Name = "Actions",
             .HeaderText = "Actions",
             .Width = 180,
             .FlatStyle = FlatStyle.Flat,
-            .Text = "▼ Select Action"
+            .Text = "Select Action",
+            .UseColumnTextForButtonValue = True
         }
+
         actionColumn.DefaultCellStyle.BackColor = Color.FromArgb(100, 181, 246)
         actionColumn.DefaultCellStyle.ForeColor = Color.White
         actionColumn.DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Bold)
         actionColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         dgvResidents.Columns.Add(actionColumn)
 
-        ' === ADD CELLCLICK EVENT ===
         AddHandler dgvResidents.CellClick, AddressOf dgvResidents_CellClick
         AddHandler dgvResidents.CellMouseEnter, AddressOf dgvResidents_CellMouseEnter
         AddHandler dgvResidents.CellMouseLeave, AddressOf dgvResidents_CellMouseLeave
     End Sub
 
-    ''' <summary>
-    ''' Load all residents
-    ''' </summary>
     Private Sub LoadAllResidents()
         Try
             Dim dataTable As DataTable = residentLogic.GetAllResidents()
@@ -135,72 +105,67 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Auto-adjust column widths to fit properly
-    ''' </summary>
     Private Sub AutoAdjustColumnWidths()
         Try
             Dim totalWidth As Integer = 0
-            For Each col In dgvResidents.Columns
+
+            For Each col As DataGridViewColumn In dgvResidents.Columns
                 If col.Visible Then
                     totalWidth += col.Width
                 End If
             Next
 
-            ' Distribute remaining space to FirstName column
-            If totalWidth < dgvResidents.Width Then
+            If totalWidth < dgvResidents.Width AndAlso dgvResidents.Columns.Contains("FirstName") Then
                 Dim remainingWidth As Integer = dgvResidents.Width - totalWidth - 25
-                If remainingWidth > 0 AndAlso dgvResidents.Columns.Contains(dgvResidents.Columns("FirstName")) Then
+
+                If remainingWidth > 0 Then
                     dgvResidents.Columns("FirstName").Width += remainingWidth
                 End If
             End If
+
         Catch ex As Exception
             Debug.WriteLine("Error adjusting column widths: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Add New Resident button click
-    ''' </summary>
     Private Sub btnAddNewResident_Click(sender As Object, e As EventArgs) Handles btnAddNewResident.Click
         Try
+            If Not LogInForm.CanAdd(RESIDENT_FORM_CLASS) Then
+                MsgBox("You do not have permission to add residents.", MsgBoxStyle.Exclamation, "Access Denied")
+                Return
+            End If
+
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
                 Dim residentAddingForm As New ResidentAdding_Form()
                 Dashboard_Layout.CurrentInstance.LoadContentPanel(residentAddingForm)
             End If
+
         Catch ex As Exception
             MsgBox("Error loading form: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Search button click
-    ''' </summary>
     Private Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
         Try
             If String.IsNullOrWhiteSpace(txtSearch.Text) Then
                 LoadAllResidents()
             Else
-                Dim dataTable As DataTable = residentLogic.SearchResidents(txtSearch.Text)
+                Dim dataTable As DataTable = residentLogic.SearchResidents(txtSearch.Text.Trim())
                 dgvResidents.DataSource = dataTable
                 AutoAdjustColumnWidths()
             End If
+
         Catch ex As Exception
             MsgBox("Error searching residents: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' DataGridView cell click event - Show action menu
-    ''' </summary>
     Private Sub dgvResidents_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvResidents.CellClick
         Try
             If e.RowIndex < 0 Then Return
 
-            ' === Get Resident ID ===
             selectedResidentId = CInt(dgvResidents.Rows(e.RowIndex).Cells("ResidentId").Value)
 
-            ' === If Actions column clicked, show context menu ===
             If e.ColumnIndex = dgvResidents.Columns("Actions").Index Then
                 ShowActionMenu(e)
             End If
@@ -210,40 +175,35 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Show context menu with action options
-    ''' </summary>
     Private Sub ShowActionMenu(e As DataGridViewCellEventArgs)
         Try
-            ' === Create Context Menu ===
             Dim contextMenu As New ContextMenuStrip()
             contextMenu.Font = New Font("Arial", 10, FontStyle.Regular)
             contextMenu.BackColor = Color.White
             contextMenu.ForeColor = Color.Black
 
-            ' === View Option ===
-            Dim viewItem As New ToolStripMenuItem("👁️ View Details")
+            Dim viewItem As New ToolStripMenuItem("View Details")
             viewItem.BackColor = Color.FromArgb(240, 240, 240)
             AddHandler viewItem.Click, Sub() HandleViewClick()
             contextMenu.Items.Add(viewItem)
 
-            ' === Update Option ===
-            Dim updateItem As New ToolStripMenuItem("✏️ Update Resident")
-            updateItem.BackColor = Color.FromArgb(240, 240, 240)
-            AddHandler updateItem.Click, Sub() HandleUpdateClick()
-            contextMenu.Items.Add(updateItem)
+            If LogInForm.CanEdit(RESIDENT_FORM_CLASS) Then
+                Dim updateItem As New ToolStripMenuItem("Update Resident")
+                updateItem.BackColor = Color.FromArgb(240, 240, 240)
+                AddHandler updateItem.Click, Sub() HandleUpdateClick()
+                contextMenu.Items.Add(updateItem)
+            End If
 
-            ' === Separator ===
-            contextMenu.Items.Add(New ToolStripSeparator())
+            If LogInForm.CanDelete(RESIDENT_FORM_CLASS) Then
+                contextMenu.Items.Add(New ToolStripSeparator())
 
-            ' === Archive Option ===
-            Dim archiveItem As New ToolStripMenuItem("🗑️ Archive")
-            archiveItem.BackColor = Color.FromArgb(255, 200, 200)
-            archiveItem.ForeColor = Color.FromArgb(244, 67, 54)
-            AddHandler archiveItem.Click, Sub() HandleArchiveClick()
-            contextMenu.Items.Add(archiveItem)
+                Dim archiveItem As New ToolStripMenuItem("Archive")
+                archiveItem.BackColor = Color.FromArgb(255, 200, 200)
+                archiveItem.ForeColor = Color.FromArgb(244, 67, 54)
+                AddHandler archiveItem.Click, Sub() HandleArchiveClick()
+                contextMenu.Items.Add(archiveItem)
+            End If
 
-            ' === Show menu at mouse position ===
             contextMenu.Show(dgvResidents, dgvResidents.PointToClient(MousePosition))
 
         Catch ex As Exception
@@ -251,16 +211,11 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Highlight button on mouse enter
-    ''' </summary>
     Private Sub dgvResidents_CellMouseEnter(sender As Object, e As DataGridViewCellEventArgs) Handles dgvResidents.CellMouseEnter
         Try
             If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
-                Dim cell = dgvResidents.Rows(e.RowIndex).Cells(e.ColumnIndex)
                 If e.ColumnIndex = dgvResidents.Columns("Actions").Index Then
-                    ' Highlight action button
-                    cell.Style.BackColor = Color.FromArgb(66, 165, 245)
+                    dgvResidents.Rows(e.RowIndex).Cells(e.ColumnIndex).Style.BackColor = Color.FromArgb(66, 165, 245)
                     dgvResidents.Cursor = Cursors.Hand
                 End If
             End If
@@ -268,9 +223,6 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Reset button color on mouse leave
-    ''' </summary>
     Private Sub dgvResidents_CellMouseLeave(sender As Object, e As DataGridViewCellEventArgs) Handles dgvResidents.CellMouseLeave
         Try
             If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
@@ -283,39 +235,42 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Handle View button click - Open in view-only mode
-    ''' </summary>
     Private Sub HandleViewClick()
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
-                Dim residentAddingForm As New ResidentAdding_Form(selectedResidentId, True) ' True = View Only
+                Dim residentAddingForm As New ResidentAdding_Form(selectedResidentId, True)
                 Dashboard_Layout.CurrentInstance.LoadContentPanel(residentAddingForm)
             End If
+
         Catch ex As Exception
             MsgBox("Error loading view form: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Handle Update button click - Open in edit mode
-    ''' </summary>
     Private Sub HandleUpdateClick()
         Try
+            If Not LogInForm.CanEdit(RESIDENT_FORM_CLASS) Then
+                MsgBox("You do not have permission to edit residents.", MsgBoxStyle.Exclamation, "Access Denied")
+                Return
+            End If
+
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
-                Dim residentAddingForm As New ResidentAdding_Form(selectedResidentId, False) ' False = Edit Mode
+                Dim residentAddingForm As New ResidentAdding_Form(selectedResidentId, False)
                 Dashboard_Layout.CurrentInstance.LoadContentPanel(residentAddingForm)
             End If
+
         Catch ex As Exception
             MsgBox("Error loading update form: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Handle Archive button click
-    ''' </summary>
     Private Sub HandleArchiveClick()
         Try
+            If Not LogInForm.CanDelete(RESIDENT_FORM_CLASS) Then
+                MsgBox("You do not have permission to archive residents.", MsgBoxStyle.Exclamation, "Access Denied")
+                Return
+            End If
+
             Dim residentName As String = dgvResidents.SelectedRows(0).Cells("FirstName").Value.ToString() & " " &
                                         dgvResidents.SelectedRows(0).Cells("LastName").Value.ToString()
 
@@ -338,13 +293,11 @@ Public Class ResidentMain_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         If responsiveManager IsNot Nothing Then
             responsiveManager.Cleanup()
         End If
+
         MyBase.OnFormClosing(e)
     End Sub
 

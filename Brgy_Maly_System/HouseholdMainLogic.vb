@@ -201,7 +201,14 @@ Public Class HouseholdMainLogic
                     End Using
                 End If
 
+                ' === LOG AUDIT TRAIL ===
+                GlobalAuditLogger.Log("HouseholdMain_Form", "ARCHIVE HOUSEHOLD",
+                    LogInForm.CurrentUsername & " archived/deleted household (ID: " & householdId & ")",
+                    connection, transaction)
+
                 transaction.Commit()
+
+
                 result.IsSuccess = True
                 result.Message = "Household archived successfully."
                 result.ErrorCode = 0

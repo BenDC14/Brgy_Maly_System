@@ -174,7 +174,8 @@ Public Class HouseholdAddingLogic
                 Return result
             End If
 
-            connection.Open()
+            ' === DO NOT OPEN - Connection is already open from GetDatabaseConnection() ===
+            ' connection.Open()  ' <-- REMOVE THIS LINE!
 
             ' === START TRANSACTION ===
             Dim transaction As MySqlTransaction = connection.BeginTransaction()
@@ -217,6 +218,8 @@ Public Class HouseholdAddingLogic
 
                 ' === COMMIT TRANSACTION ===
                 transaction.Commit()
+
+
 
                 result.IsSuccess = True
                 result.Message = "Household added successfully."
@@ -410,6 +413,12 @@ Public Class HouseholdAddingLogic
                 End If
 
                 transaction.Commit()
+
+                ' === LOG AUDIT TRAIL ===
+                GlobalAuditLogger.Log("HouseholdAdding_Form", "DELETE HOUSEHOLD",
+                    LogInForm.CurrentUsername & " deleted household (ID: " & householdId & ")",
+                    connection, transaction)
+
                 result.IsSuccess = True
                 result.Message = "Household deleted successfully."
                 result.ErrorCode = 0

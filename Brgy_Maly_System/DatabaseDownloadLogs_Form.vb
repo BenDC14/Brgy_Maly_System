@@ -1,98 +1,148 @@
 ﻿Imports System.Drawing.Drawing2D
 
 Public Class DatabaseDownloadLogs_Form
-    ' === Responsive Manager Instance ===
     Private responsiveManager As DatabaseDownloadLogsResponsiveManager
+    Private downloadLogic As New DatabaseDownloadLogsLogic()
+    Private isChangingChecks As Boolean = False
 
-    ''' <summary>
-    ''' Constructor - Enable double buffering
-    ''' </summary>
     Public Sub New()
         InitializeComponent()
-
-        ' === Enable double buffering (must be set here, it's Protected) ===
         Me.DoubleBuffered = True
     End Sub
 
     Private Sub DatabaseDownloadLogs_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
         ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
-
-        ' === Apply Button Styling (Once - never reapply) ===
         RoundButtonCorners(btnDownload, 20)
 
-        ' === Initialize Responsive Manager (Modal Pattern) ===
         responsiveManager = New DatabaseDownloadLogsResponsiveManager(Me)
         responsiveManager.Initialize()
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient background to panel
-    ''' </summary>
-    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
-        Dim startColor = ColorTranslator.FromHtml(startColorHex)
-        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+    Private Sub cbBackupLogs_CheckedChanged(sender As Object, e As EventArgs) Handles cbBackupLogs.CheckedChanged
+        If isChangingChecks Then Return
 
-        Dim brush As New LinearGradientBrush(
-            New Point(0, 0),
-            New Point(pnl.Width, 0),
-            startColor,
-            endColor
-        )
-
-        Dim panelLocal = pnl
-
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+        If cbBackupLogs.Checked Then
+            isChangingChecks = True
+            cbBoth.Checked = False
+            isChangingChecks = False
+        End If
     End Sub
 
-    ''' <summary>
-    ''' Apply rounded corners to button (with resize handler)
-    ''' </summary>
-    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
-        Dim p As New GraphicsPath()
-        p.AddArc(0, 0, radius, radius, 180, 90)
-        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
-        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
-        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
-        p.CloseFigure()
-        btn.Region = New Region(p)
+    Private Sub cbRestoreLogs_CheckedChanged(sender As Object, e As EventArgs) Handles cbRestoreLogs.CheckedChanged
+        If isChangingChecks Then Return
 
-        Dim btnLocal = btn
-
-        AddHandler btn.Resize, Sub(s, args)
-                                   Dim newPath As New GraphicsPath()
-                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
-                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
-                                   newPath.CloseFigure()
-                                   btnLocal.Region = New Region(newPath)
-                               End Sub
+        If cbRestoreLogs.Checked Then
+            isChangingChecks = True
+            cbBoth.Checked = False
+            isChangingChecks = False
+        End If
     End Sub
 
-    ''' <summary>
-    ''' Exit button - close the dialog
-    ''' </summary>
+    Private Sub cbBoth_CheckedChanged(sender As Object, e As EventArgs) Handles cbBoth.CheckedChanged
+        If isChangingChecks Then Return
+
+        If cbBoth.Checked Then
+            isChangingChecks = True
+            cbBackupLogs.Checked = False
+            cbRestoreLogs.Checked = False
+            isChangingChecks = False
+        End If
+    End Sub
+
+    Private Sub cbCSV_CheckedChanged(sender As Object, e As EventArgs) Handles cbCSV.CheckedChanged
+        If isChangingChecks Then Return
+
+        If cbCSV.Checked Then
+            isChangingChecks = True
+            cbExcel.Checked = False
+            isChangingChecks = False
+        End If
+    End Sub
+
+    Private Sub cbExcel_CheckedChanged(sender As Object, e As EventArgs) Handles cbExcel.CheckedChanged
+        If isChangingChecks Then Return
+
+        If cbExcel.Checked Then
+            isChangingChecks = True
+            cbCSV.Checked = False
+            isChangingChecks = False
+        End If
+    End Sub
+
+    Private Sub btnDownload_Click(sender As Object, e As EventArgs) Handles btnDownload.Click
+        Try
+            Dim includeBackup As Boolean = cbBackupLogs.Checked OrElse cbBoth.Checked
+            Dim includeRestore As Boolean = cbRestoreLogs.Checked OrElse cbBoth.Checked
+            Dim selectedFormat As String = ""
+
+            If cbCSV.Checked Then selectedFormat = "CSV"
+            If cbExcel.Checked Then selectedFormat = "Excel"
+
+            Dim validationError As String = downloadLogic.ValidateDownloadSelection(includeBackup, includeRestore, selectedFormat)
+
+            If Not String.IsNullOrWhiteSpace(validationError) Then
+                MsgBox(validationError, MsgBoxStyle.Information, "Validation")
+                Return
+            End If
+
+            Using saveDialog As New SaveFileDialog()
+                saveDialog.FileName = downloadLogic.BuildDefaultFileName(includeBackup, includeRestore, selectedFormat)
+
+                If selectedFormat = "Excel" Then
+                    saveDialog.Filter = "Excel File (*.xls)|*.xls"
+                Else
+                    saveDialog.Filter = "CSV File (*.csv)|*.csv"
+                End If
+
+                If saveDialog.ShowDialog() = DialogResult.OK Then
+                    downloadLogic.ExportLogs(saveDialog.FileName, includeBackup, includeRestore, selectedFormat)
+                    MsgBox("Logs downloaded successfully.", MsgBoxStyle.Information, "Success")
+                    Me.Close()
+                End If
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Error downloading logs: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
+    End Sub
+
     Private Sub ExitBtn_Click(sender As Object, e As EventArgs) Handles ExitBtn.Click
         Me.Close()
     End Sub
 
-    ' ========================================
-    ' TODO: Add your business logic methods here
-    ' ========================================
-    ' - Download button click handler
-    ' - Validate selections (at least one log type and one format)
-    ' - Handle checkbox mutual exclusivity (Both vs individual logs)
-    ' - Generate CSV export from database logs
-    ' - Generate Excel export (using EPPlus or ClosedXML)
-    ' - Show SaveFileDialog for download location
-    ' - Filter logs by type (Backup/Restore/Both)
-    ' - Format data for export (headers, columns)
-    ' - Progress indication during export
-    ' - Success/Error message handling
-    ' - Auto-close dialog after successful download
-    ' ========================================
+    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
+        Dim startColor = ColorTranslator.FromHtml(startColorHex)
+        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+
+        AddHandler pnl.Paint,
+            Sub(sender, e)
+                Using brush As New LinearGradientBrush(New Point(0, 0), New Point(pnl.Width, 0), startColor, endColor)
+                    e.Graphics.FillRectangle(brush, pnl.ClientRectangle)
+                End Using
+            End Sub
+    End Sub
+
+    Private Sub RoundButtonCorners(btn As Button, ByVal radius As Integer)
+        ApplyButtonRoundedRegion(btn, radius)
+
+        AddHandler btn.Resize,
+            Sub(s, args)
+                ApplyButtonRoundedRegion(btn, radius)
+            End Sub
+    End Sub
+
+    Private Sub ApplyButtonRoundedRegion(btn As Button, radius As Integer)
+        If btn Is Nothing Then Return
+        If btn.Width <= 0 OrElse btn.Height <= 0 Then Return
+
+        Using p As New Drawing2D.GraphicsPath()
+            p.AddArc(0, 0, radius, radius, 180, 90)
+            p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
+            p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
+            p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
+            p.CloseFigure()
+            btn.Region = New Region(p)
+        End Using
+    End Sub
 
 End Class

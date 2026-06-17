@@ -1,58 +1,65 @@
 ﻿Imports System.Drawing.Drawing2D
 
+''' <summary>
+''' UI Event Layer for ResidentAdding_Form.
+''' Responsibilities: wiring events, reading/writing controls, delegating all
+''' business logic and database calls to ResidentAddingLogic.
+''' No SQL or direct DB code belongs in this file.
+''' </summary>
 Public Class ResidentAdding_Form
-    ' === Service Layer (Business Logic) ===
-    Private residentLogic As New ResidentAddingLogic()
 
-    ' === Responsive Manager Instance ===
-    Private responsiveManager As ResidentAddingResponsiveManager
+    Private Const RESIDENT_FORM_CLASS As String = "ResidentMain_Form"
 
-    ' === UI State ===
-    Private editingResidentId As Integer = -1
-    Private isViewOnly As Boolean = False
-    Private currentResidentData As ResidentAddingLogic.ResidentData
+    Private _logic As New ResidentAddingLogic()
+    Private _responsiveManager As ResidentAddingResponsiveManager
 
-    ''' <summary>
-    ''' Constructor - Accept optional resident ID and view-only mode
-    ''' </summary>
+    Private _editingResidentId As Integer = -1
+    Private _isViewOnly As Boolean = False
+    Private _currentData As ResidentAddingLogic.ResidentData
+
+    ' ─── Constructor ──────────────────────────────────────────────────────────────
+
     Public Sub New(Optional residentId As Integer = -1, Optional viewOnly As Boolean = False)
         InitializeComponent()
-        editingResidentId = residentId
-        isViewOnly = viewOnly
+        _editingResidentId = residentId
+        _isViewOnly = viewOnly
     End Sub
 
-    Private Sub ResidentAdding_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
-        UIUtilities.ApplyGradient(fillpanel, "#EDFFE9", "#FFFFFF")
+    ' ─── Form Load ────────────────────────────────────────────────────────────────
 
-        ' === Apply Button Styling ===
+    Private Sub ResidentAdding_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Visual polish
+        UIUtilities.ApplyGradient(fillpanel, "#EDFFE9", "#FFFFFF")
         UIUtilities.RoundButtonCorners(btnBack, 20)
         UIUtilities.RoundButtonCorners(BtnAddResident, 20)
         UIUtilities.RoundButtonCorners(btnSearch, 20)
 
-        ' === Initialize Responsive Manager ===
-        responsiveManager = New ResidentAddingResponsiveManager(Me)
-        responsiveManager.Initialize()
+        ' Responsive layout
+        _responsiveManager = New ResidentAddingResponsiveManager(Me)
+        _responsiveManager.Initialize()
 
-        ' === Load Household Dropdown ===
+        ' Data bindings
         LoadHouseholdComboBox()
+        LoadCategoriesCheckedListBox()   ' Task 2 requirement: bind CLB from DB
 
-        ' === Setup Form Mode ===
-        If isViewOnly Then
+        ' Mode setup
+        If _isViewOnly Then
             SetupViewOnlyMode()
-        ElseIf editingResidentId > 0 Then
+        ElseIf _editingResidentId > 0 Then
             SetupEditMode()
         Else
             SetupAddMode()
         End If
     End Sub
 
+    ' ─── Data loading helpers ────────────────────────────────────────────────────
+
     ''' <summary>
-    ''' Load all households into combobox
+    ''' Populates cbHouseholdNum from the database via the Logic layer.
     ''' </summary>
     Private Sub LoadHouseholdComboBox()
         Try
-            Dim households = residentLogic.GetAllHouseholds()
+            Dim households As DataTable = _logic.GetAllHouseholds()
             cbHouseholdNum.DataSource = households
             cbHouseholdNum.DisplayMember = "HouseholdNumber"
             cbHouseholdNum.ValueMember = "HouseholdID"
@@ -62,80 +69,86 @@ Public Class ResidentAdding_Form
     End Sub
 
     ''' <summary>
-    ''' Handle household combobox selection change - Show address
+    ''' Calls the Logic layer to fetch the categories DataTable and binds it to
+    ''' CategoriesCLB using CategoryId as the value member and Category as the
+    ''' display member.  This replaces the old hardcoded checkboxes.
     ''' </summary>
-    Private Sub cbHouseholdNum_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbHouseholdNum.SelectedIndexChanged
+    Private Sub LoadCategoriesCheckedListBox()
+        Try
+            Dim categoriesTable As DataTable = _logic.GetCategoriesTable()
+
+            ' A CheckedListBox does not natively support ValueMember/DisplayMember
+            ' the same way a ComboBox does, so we use a DataSource trick:
+            ' bind via DataSource and rely on DisplayMember for the label text,
+            ' then retrieve the ValueMember (CategoryId) when reading checked items.
+            CategoriesCLB.DataSource = categoriesTable
+            CategoriesCLB.DisplayMember = "Category"
+            CategoriesCLB.ValueMember = "CategoryId"
+
+        Catch ex As Exception
+            MsgBox("Error loading categories: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
+    End Sub
+
+    ' ─── ComboBox events ─────────────────────────────────────────────────────────
+
+    Private Sub cbHouseholdNum_SelectedIndexChanged(sender As Object, e As EventArgs) _
+            Handles cbHouseholdNum.SelectedIndexChanged
         Try
             If cbHouseholdNum.SelectedIndex >= 0 AndAlso cbHouseholdNum.ValueMember <> "" Then
                 Dim householdId As Integer = CInt(cbHouseholdNum.SelectedValue)
-                Dim address As String = residentLogic.GetHouseholdAddress(householdId)
-                txtAddressInfo.Text = address
+                txtAddressInfo.Text = _logic.GetHouseholdAddress(householdId)
             End If
         Catch ex As Exception
-            Debug.WriteLine("Error in household selection: " & ex.Message)
+            Debug.WriteLine("Household selection error: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Setup form for view-only mode
-    ''' </summary>
+    ' ─── Mode setup ──────────────────────────────────────────────────────────────
+
     Private Sub SetupViewOnlyMode()
         Try
-            ' === LOAD RESIDENT DATA ===
-            currentResidentData = residentLogic.GetResidentById(editingResidentId)
-
-            ' === POPULATE ALL FIELDS ===
-            PopulateFormFields(currentResidentData)
-
-            ' === DISABLE ALL INPUT FIELDS ===
+            _currentData = _logic.GetResidentById(_editingResidentId)
+            PopulateFormFields(_currentData)
             DisableAllInputFields()
-
-            ' === HIDE SAVE BUTTON ===
             BtnAddResident.Visible = False
-
-            ' === SHOW BACK BUTTON ONLY ===
             btnBack.Visible = True
-
         Catch ex As Exception
             MsgBox("Error loading resident data: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Setup form for edit mode
-    ''' </summary>
     Private Sub SetupEditMode()
         Try
-            ' === LOAD RESIDENT DATA ===
-            currentResidentData = residentLogic.GetResidentById(editingResidentId)
-
-            ' === POPULATE ALL FIELDS ===
-            PopulateFormFields(currentResidentData)
-
-            ' === ENABLE ALL INPUT FIELDS ===
+            If Not LogInForm.CanEdit(RESIDENT_FORM_CLASS) Then
+                _isViewOnly = True
+                SetupViewOnlyMode()
+                Return
+            End If
+            _currentData = _logic.GetResidentById(_editingResidentId)
+            PopulateFormFields(_currentData)
             EnableAllInputFields()
-
-            ' === CHANGE BUTTON TEXT ===
             BtnAddResident.Text = "Update Resident"
-
         Catch ex As Exception
             MsgBox("Error loading resident data: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Setup form for add mode
-    ''' </summary>
     Private Sub SetupAddMode()
-        ' === ENABLE ALL INPUT FIELDS ===
+        If Not LogInForm.CanAdd(RESIDENT_FORM_CLASS) Then
+            MsgBox("You do not have permission to add residents.", MsgBoxStyle.Exclamation, "Access Denied")
+            NavigateBackToResidentMain()
+            Return
+        End If
         EnableAllInputFields()
-
-        ' === BUTTON TEXT ALREADY SET ===
         BtnAddResident.Text = "Add Resident"
     End Sub
 
+    ' ─── Field population / read ─────────────────────────────────────────────────
+
     ''' <summary>
-    ''' Populate form fields with resident data
+    ''' Fills all form controls from a ResidentData object retrieved from the DB.
+    ''' For the CLB, checks items whose CategoryId is in data.SelectedCategoryIds.
     ''' </summary>
     Private Sub PopulateFormFields(data As ResidentAddingLogic.ResidentData)
         Try
@@ -154,20 +167,59 @@ Public Class ResidentAdding_Form
             txtEmailAddress.Text = data.EmailAddress
             CbYes.Checked = data.Voter
             CbNo.Checked = Not data.Voter
-            cbHouseholdNum.SelectedValue = data.HouseholdId
             CbEducationLevel.Text = data.EducationLevel
             CbEducationalStatus.Text = data.EducationalStatus
+            txtAdditionalInfo.Text = data.AdditionalInfo
+
+            If data.HouseholdId > 0 Then
+                cbHouseholdNum.SelectedValue = data.HouseholdId
+            End If
+
+            ' Restore checked state for each category item in the CLB
+            CheckCategoriesByIds(data.SelectedCategoryIds)
+
         Catch ex As Exception
             Debug.WriteLine("Error populating fields: " & ex.Message)
         End Try
     End Sub
 
     ''' <summary>
-    ''' Get form data as ResidentData object
+    ''' Iterates the CLB items and checks those whose CategoryId is in the supplied list.
+    ''' </summary>
+    Private Sub CheckCategoriesByIds(categoryIds As List(Of Integer))
+        For i As Integer = 0 To CategoriesCLB.Items.Count - 1
+            Dim rowView As DataRowView = TryCast(CategoriesCLB.Items(i), DataRowView)
+            If rowView Is Nothing Then Continue For
+
+            Dim itemId As Integer = CInt(rowView("CategoryId"))
+            CategoriesCLB.SetItemChecked(i, categoryIds.Contains(itemId))
+        Next
+    End Sub
+
+    ''' <summary>
+    ''' Reads all checked items from CategoriesCLB and returns their CategoryIds.
+    ''' No SQL here – just reading the bound DataRowView objects.
+    ''' </summary>
+    Private Function GetSelectedCategoryIds() As List(Of Integer)
+        Dim ids As New List(Of Integer)()
+
+        For Each checkedItem As Object In CategoriesCLB.CheckedItems
+            Dim rowView As DataRowView = TryCast(checkedItem, DataRowView)
+            If rowView IsNot Nothing Then
+                ids.Add(CInt(rowView("CategoryId")))
+            End If
+        Next
+
+        Return ids
+    End Function
+
+    ''' <summary>
+    ''' Assembles a ResidentData object from the current form state.
+    ''' Passes the list of selected Category IDs (not names) to the Logic layer.
     ''' </summary>
     Private Function GetFormData() As ResidentAddingLogic.ResidentData
-        Dim data As New ResidentAddingLogic.ResidentData With {
-            .ResidentId = editingResidentId,
+        Return New ResidentAddingLogic.ResidentData With {
+            .ResidentId = _editingResidentId,
             .FirstName = txtFname.Text.Trim(),
             .LastName = txtLname.Text.Trim(),
             .MiddleName = txtMname.Text.Trim(),
@@ -185,33 +237,13 @@ Public Class ResidentAdding_Form
             .HouseholdId = CInt(cbHouseholdNum.SelectedValue),
             .EducationLevel = CbEducationLevel.Text,
             .EducationalStatus = CbEducationalStatus.Text,
-            .Categories = GetSelectedCategories()
+            .AdditionalInfo = txtAdditionalInfo.Text.Trim(),
+            .SelectedCategoryIds = GetSelectedCategoryIds()   ' ← IDs only, no SQL here
         }
-        Return data
     End Function
 
-    ''' <summary>
-    ''' Get selected categories from checkboxes
-    ''' </summary>
-    Private Function GetSelectedCategories() As List(Of String)
-        Dim categories As New List(Of String)()
-        If cbSeniorCitizen.Checked Then categories.Add("Senior Citizen")
-        If cbPWD.Checked Then categories.Add("PWD")
-        If cbStudent.Checked Then categories.Add("Student")
-        If cbSoloParent.Checked Then categories.Add("Solo Parent")
-        If cbEmployed.Checked Then categories.Add("Employed")
-        If cbUnemployed.Checked Then categories.Add("Unemployed")
-        If cbOFW.Checked Then categories.Add("OFW")
-        If cbOutofSchoolChildren.Checked Then categories.Add("Out of School Children")
-        If cbHead.Checked Then categories.Add("Head")
-        If cbInhabitant.Checked Then categories.Add("Inhabitant")
-        If cbIndigenousPeople.Checked Then categories.Add("Indigenous People")
-        Return categories
-    End Function
+    ' ─── Enable / Disable helpers ─────────────────────────────────────────────────
 
-    ''' <summary>
-    ''' Disable all input fields for view-only mode
-    ''' </summary>
     Private Sub DisableAllInputFields()
         txtFname.ReadOnly = True
         txtLname.ReadOnly = True
@@ -231,23 +263,10 @@ Public Class ResidentAdding_Form
         cbHouseholdNum.Enabled = False
         CbEducationLevel.Enabled = False
         CbEducationalStatus.Enabled = False
-        cbSeniorCitizen.Enabled = False
-        cbPWD.Enabled = False
-        cbStudent.Enabled = False
-        cbSoloParent.Enabled = False
-        cbEmployed.Enabled = False
-        cbUnemployed.Enabled = False
-        cbOFW.Enabled = False
-        cbOutofSchoolChildren.Enabled = False
-        cbHead.Enabled = False
-        cbInhabitant.Enabled = False
-        cbIndigenousPeople.Enabled = False
+        CategoriesCLB.Enabled = False   ' replaces all old individual cb.Enabled = False
         txtAdditionalInfo.ReadOnly = True
     End Sub
 
-    ''' <summary>
-    ''' Enable all input fields for add/edit mode
-    ''' </summary>
     Private Sub EnableAllInputFields()
         txtFname.ReadOnly = False
         txtLname.ReadOnly = False
@@ -267,36 +286,38 @@ Public Class ResidentAdding_Form
         cbHouseholdNum.Enabled = True
         CbEducationLevel.Enabled = True
         CbEducationalStatus.Enabled = True
-        cbSeniorCitizen.Enabled = True
-        cbPWD.Enabled = True
-        cbStudent.Enabled = True
-        cbSoloParent.Enabled = True
-        cbEmployed.Enabled = True
-        cbUnemployed.Enabled = True
-        cbOFW.Enabled = True
-        cbOutofSchoolChildren.Enabled = True
-        cbHead.Enabled = True
-        cbInhabitant.Enabled = True
-        cbIndigenousPeople.Enabled = True
+        CategoriesCLB.Enabled = True    ' replaces all old individual cb.Enabled = True
         txtAdditionalInfo.ReadOnly = False
     End Sub
 
+    ' ─── Button events ───────────────────────────────────────────────────────────
+
     ''' <summary>
-    ''' Add/Update Resident button click
+    ''' Save / Update button.  Reads the form via GetFormData() – which includes
+    ''' GetSelectedCategoryIds() – then hands everything to the Logic layer.
+    ''' No SQL in this file.
     ''' </summary>
     Private Sub BtnAddResident_Click(sender As Object, e As EventArgs) Handles BtnAddResident.Click
         Try
-            Dim formData = GetFormData()
+            If _isViewOnly Then Return
+
+            If _editingResidentId > 0 AndAlso Not LogInForm.CanEdit(RESIDENT_FORM_CLASS) Then
+                MsgBox("You do not have permission to edit residents.", MsgBoxStyle.Exclamation, "Access Denied")
+                Return
+            End If
+
+            If _editingResidentId <= 0 AndAlso Not LogInForm.CanAdd(RESIDENT_FORM_CLASS) Then
+                MsgBox("You do not have permission to add residents.", MsgBoxStyle.Exclamation, "Access Denied")
+                Return
+            End If
+
+            Dim formData As ResidentAddingLogic.ResidentData = GetFormData()
             Dim result As ResidentAddingLogic.ResidentOperationResult
 
-            If isViewOnly Then
-                Return ' Should not happen
-            ElseIf editingResidentId > 0 Then
-                ' === UPDATE MODE ===
-                result = residentLogic.UpdateResident(formData)
+            If _editingResidentId > 0 Then
+                result = _logic.UpdateResident(formData)
             Else
-                ' === ADD MODE ===
-                result = residentLogic.AddResident(formData)
+                result = _logic.AddResident(formData)
             End If
 
             If result.IsSuccess Then
@@ -307,37 +328,31 @@ Public Class ResidentAdding_Form
             End If
 
         Catch ex As Exception
-            MsgBox("Error: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox("Unexpected error: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Back button click
-    ''' </summary>
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         NavigateBackToResidentMain()
     End Sub
 
-    ''' <summary>
-    ''' Navigate back to Resident Main form
-    ''' </summary>
+    ' ─── Navigation ──────────────────────────────────────────────────────────────
+
     Private Sub NavigateBackToResidentMain()
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
-                Dim residentMainForm As New ResidentMain_Form()
-                Dashboard_Layout.CurrentInstance.LoadContentPanel(residentMainForm)
+                Dashboard_Layout.CurrentInstance.LoadContentPanel(New ResidentMain_Form())
             End If
         Catch ex As Exception
-            MsgBox("Error: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox("Navigation error: " & ex.Message, MsgBoxStyle.Critical, "Error")
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
+    ' ─── Cleanup ─────────────────────────────────────────────────────────────────
+
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
-        If responsiveManager IsNot Nothing Then
-            responsiveManager.Cleanup()
+        If _responsiveManager IsNot Nothing Then
+            _responsiveManager.Cleanup()
         End If
         MyBase.OnFormClosing(e)
     End Sub

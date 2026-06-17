@@ -23,21 +23,21 @@ Partial Class HouseholdAddNewFamily_Form
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.FillPanel = New System.Windows.Forms.Panel()
-        Me.txtFamilyName = New System.Windows.Forms.TextBox()
-        Me.FamilyNamelbl = New System.Windows.Forms.Label()
-        Me.txtFamilyHead = New System.Windows.Forms.TextBox()
-        Me.FamilyHeadlbl = New System.Windows.Forms.Label()
-        Me.txtHousehold = New System.Windows.Forms.TextBox()
-        Me.Householdlbl = New System.Windows.Forms.Label()
-        Me.btnSaveFamily = New System.Windows.Forms.Button()
-        Me.LinePnl = New System.Windows.Forms.Panel()
-        Me.Familieslbl = New System.Windows.Forms.Label()
-        Me.FamilyMembersDGV = New System.Windows.Forms.DataGridView()
-        Me.cbCivilStatus = New System.Windows.Forms.ComboBox()
-        Me.CivilStatuslbl = New System.Windows.Forms.Label()
+        Me.AddNewFamilylbl = New System.Windows.Forms.Label()
         Me.btnBack = New System.Windows.Forms.Button()
         Me.BtnSaveRelationship = New System.Windows.Forms.Button()
-        Me.AddNewFamilylbl = New System.Windows.Forms.Label()
+        Me.cbRelationshipType = New System.Windows.Forms.ComboBox()
+        Me.CivilStatuslbl = New System.Windows.Forms.Label()
+        Me.FamilyMembersDGV = New System.Windows.Forms.DataGridView()
+        Me.Familieslbl = New System.Windows.Forms.Label()
+        Me.LinePnl = New System.Windows.Forms.Panel()
+        Me.btnSaveFamily = New System.Windows.Forms.Button()
+        Me.txtFamilyName = New System.Windows.Forms.TextBox()
+        Me.FamilyNamelbl = New System.Windows.Forms.Label()
+        Me.Householdlbl = New System.Windows.Forms.Label()
+        Me.txtHousehold = New System.Windows.Forms.TextBox()
+        Me.FamilyHeadlbl = New System.Windows.Forms.Label()
+        Me.familyheadcb = New System.Windows.Forms.ComboBox()
         Me.FillPanel.SuspendLayout()
         CType(Me.FamilyMembersDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -45,10 +45,11 @@ Partial Class HouseholdAddNewFamily_Form
         'FillPanel
         '
         Me.FillPanel.BackColor = System.Drawing.Color.Transparent
+        Me.FillPanel.Controls.Add(Me.familyheadcb)
         Me.FillPanel.Controls.Add(Me.AddNewFamilylbl)
         Me.FillPanel.Controls.Add(Me.btnBack)
         Me.FillPanel.Controls.Add(Me.BtnSaveRelationship)
-        Me.FillPanel.Controls.Add(Me.cbCivilStatus)
+        Me.FillPanel.Controls.Add(Me.cbRelationshipType)
         Me.FillPanel.Controls.Add(Me.CivilStatuslbl)
         Me.FillPanel.Controls.Add(Me.FamilyMembersDGV)
         Me.FillPanel.Controls.Add(Me.Familieslbl)
@@ -57,7 +58,6 @@ Partial Class HouseholdAddNewFamily_Form
         Me.FillPanel.Controls.Add(Me.txtFamilyName)
         Me.FillPanel.Controls.Add(Me.FamilyNamelbl)
         Me.FillPanel.Controls.Add(Me.Householdlbl)
-        Me.FillPanel.Controls.Add(Me.txtFamilyHead)
         Me.FillPanel.Controls.Add(Me.txtHousehold)
         Me.FillPanel.Controls.Add(Me.FamilyHeadlbl)
         Me.FillPanel.Dock = System.Windows.Forms.DockStyle.Fill
@@ -66,123 +66,15 @@ Partial Class HouseholdAddNewFamily_Form
         Me.FillPanel.Size = New System.Drawing.Size(1700, 1004)
         Me.FillPanel.TabIndex = 0
         '
-        'txtFamilyName
+        'AddNewFamilylbl
         '
-        Me.txtFamilyName.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
-        Me.txtFamilyName.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtFamilyName.Location = New System.Drawing.Point(623, 129)
-        Me.txtFamilyName.Name = "txtFamilyName"
-        Me.txtFamilyName.Size = New System.Drawing.Size(384, 26)
-        Me.txtFamilyName.TabIndex = 2
-        '
-        'FamilyNamelbl
-        '
-        Me.FamilyNamelbl.AutoSize = True
-        Me.FamilyNamelbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FamilyNamelbl.Location = New System.Drawing.Point(619, 106)
-        Me.FamilyNamelbl.Name = "FamilyNamelbl"
-        Me.FamilyNamelbl.Size = New System.Drawing.Size(107, 19)
-        Me.FamilyNamelbl.TabIndex = 0
-        Me.FamilyNamelbl.Text = "Family Name"
-        '
-        'txtFamilyHead
-        '
-        Me.txtFamilyHead.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
-        Me.txtFamilyHead.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtFamilyHead.Location = New System.Drawing.Point(1051, 129)
-        Me.txtFamilyHead.Name = "txtFamilyHead"
-        Me.txtFamilyHead.Size = New System.Drawing.Size(384, 26)
-        Me.txtFamilyHead.TabIndex = 3
-        '
-        'FamilyHeadlbl
-        '
-        Me.FamilyHeadlbl.AutoSize = True
-        Me.FamilyHeadlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FamilyHeadlbl.Location = New System.Drawing.Point(1047, 106)
-        Me.FamilyHeadlbl.Name = "FamilyHeadlbl"
-        Me.FamilyHeadlbl.Size = New System.Drawing.Size(103, 19)
-        Me.FamilyHeadlbl.TabIndex = 0
-        Me.FamilyHeadlbl.Text = "Family Head"
-        '
-        'txtHousehold
-        '
-        Me.txtHousehold.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
-        Me.txtHousehold.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtHousehold.Location = New System.Drawing.Point(203, 129)
-        Me.txtHousehold.Name = "txtHousehold"
-        Me.txtHousehold.Size = New System.Drawing.Size(384, 26)
-        Me.txtHousehold.TabIndex = 1
-        '
-        'Householdlbl
-        '
-        Me.Householdlbl.AutoSize = True
-        Me.Householdlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Householdlbl.Location = New System.Drawing.Point(199, 106)
-        Me.Householdlbl.Name = "Householdlbl"
-        Me.Householdlbl.Size = New System.Drawing.Size(93, 19)
-        Me.Householdlbl.TabIndex = 0
-        Me.Householdlbl.Text = "Household"
-        '
-        'btnSaveFamily
-        '
-        Me.btnSaveFamily.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnSaveFamily.FlatAppearance.BorderSize = 0
-        Me.btnSaveFamily.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnSaveFamily.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSaveFamily.Location = New System.Drawing.Point(203, 172)
-        Me.btnSaveFamily.Name = "btnSaveFamily"
-        Me.btnSaveFamily.Size = New System.Drawing.Size(1232, 36)
-        Me.btnSaveFamily.TabIndex = 4
-        Me.btnSaveFamily.Text = "Save Family"
-        Me.btnSaveFamily.UseVisualStyleBackColor = False
-        '
-        'LinePnl
-        '
-        Me.LinePnl.BackColor = System.Drawing.Color.Black
-        Me.LinePnl.Location = New System.Drawing.Point(0, 250)
-        Me.LinePnl.Name = "LinePnl"
-        Me.LinePnl.Size = New System.Drawing.Size(1700, 2)
-        Me.LinePnl.TabIndex = 0
-        '
-        'Familieslbl
-        '
-        Me.Familieslbl.AutoSize = True
-        Me.Familieslbl.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Familieslbl.Location = New System.Drawing.Point(32, 270)
-        Me.Familieslbl.Name = "Familieslbl"
-        Me.Familieslbl.Size = New System.Drawing.Size(93, 24)
-        Me.Familieslbl.TabIndex = 0
-        Me.Familieslbl.Text = "Families"
-        '
-        'FamilyMembersDGV
-        '
-        Me.FamilyMembersDGV.BackgroundColor = System.Drawing.Color.FromArgb(CType(CType(181, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(124, Byte), Integer))
-        Me.FamilyMembersDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.FamilyMembersDGV.Location = New System.Drawing.Point(34, 297)
-        Me.FamilyMembersDGV.Name = "FamilyMembersDGV"
-        Me.FamilyMembersDGV.Size = New System.Drawing.Size(1633, 518)
-        Me.FamilyMembersDGV.TabIndex = 5
-        '
-        'cbCivilStatus
-        '
-        Me.cbCivilStatus.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
-        Me.cbCivilStatus.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbCivilStatus.FormattingEnabled = True
-        Me.cbCivilStatus.Items.AddRange(New Object() {"Head", "Mother", "Father", "Deceased"})
-        Me.cbCivilStatus.Location = New System.Drawing.Point(188, 849)
-        Me.cbCivilStatus.Name = "cbCivilStatus"
-        Me.cbCivilStatus.Size = New System.Drawing.Size(509, 26)
-        Me.cbCivilStatus.TabIndex = 10
-        '
-        'CivilStatuslbl
-        '
-        Me.CivilStatuslbl.AutoSize = True
-        Me.CivilStatuslbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.CivilStatuslbl.Location = New System.Drawing.Point(30, 852)
-        Me.CivilStatuslbl.Name = "CivilStatuslbl"
-        Me.CivilStatuslbl.Size = New System.Drawing.Size(152, 19)
-        Me.CivilStatuslbl.TabIndex = 9
-        Me.CivilStatuslbl.Text = "Relationship Type:"
+        Me.AddNewFamilylbl.AutoSize = True
+        Me.AddNewFamilylbl.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.AddNewFamilylbl.Location = New System.Drawing.Point(30, 30)
+        Me.AddNewFamilylbl.Name = "AddNewFamilylbl"
+        Me.AddNewFamilylbl.Size = New System.Drawing.Size(228, 32)
+        Me.AddNewFamilylbl.TabIndex = 0
+        Me.AddNewFamilylbl.Text = "Add New Family"
         '
         'btnBack
         '
@@ -210,15 +102,124 @@ Partial Class HouseholdAddNewFamily_Form
         Me.BtnSaveRelationship.Text = "Save Relationship"
         Me.BtnSaveRelationship.UseVisualStyleBackColor = False
         '
-        'AddNewFamilylbl
+        'cbRelationshipType
         '
-        Me.AddNewFamilylbl.AutoSize = True
-        Me.AddNewFamilylbl.Font = New System.Drawing.Font("Arial", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AddNewFamilylbl.Location = New System.Drawing.Point(30, 30)
-        Me.AddNewFamilylbl.Name = "AddNewFamilylbl"
-        Me.AddNewFamilylbl.Size = New System.Drawing.Size(228, 32)
-        Me.AddNewFamilylbl.TabIndex = 0
-        Me.AddNewFamilylbl.Text = "Add New Family"
+        Me.cbRelationshipType.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.cbRelationshipType.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbRelationshipType.FormattingEnabled = True
+        Me.cbRelationshipType.Items.AddRange(New Object() {"Head", "Mother", "Father", "Deceased"})
+        Me.cbRelationshipType.Location = New System.Drawing.Point(188, 849)
+        Me.cbRelationshipType.Name = "cbRelationshipType"
+        Me.cbRelationshipType.Size = New System.Drawing.Size(509, 26)
+        Me.cbRelationshipType.TabIndex = 10
+        '
+        'CivilStatuslbl
+        '
+        Me.CivilStatuslbl.AutoSize = True
+        Me.CivilStatuslbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CivilStatuslbl.Location = New System.Drawing.Point(30, 852)
+        Me.CivilStatuslbl.Name = "CivilStatuslbl"
+        Me.CivilStatuslbl.Size = New System.Drawing.Size(152, 19)
+        Me.CivilStatuslbl.TabIndex = 9
+        Me.CivilStatuslbl.Text = "Relationship Type:"
+        '
+        'FamilyMembersDGV
+        '
+        Me.FamilyMembersDGV.BackgroundColor = System.Drawing.Color.FromArgb(CType(CType(181, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(124, Byte), Integer))
+        Me.FamilyMembersDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.FamilyMembersDGV.Location = New System.Drawing.Point(34, 297)
+        Me.FamilyMembersDGV.Name = "FamilyMembersDGV"
+        Me.FamilyMembersDGV.Size = New System.Drawing.Size(1633, 518)
+        Me.FamilyMembersDGV.TabIndex = 5
+        '
+        'Familieslbl
+        '
+        Me.Familieslbl.AutoSize = True
+        Me.Familieslbl.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Familieslbl.Location = New System.Drawing.Point(32, 270)
+        Me.Familieslbl.Name = "Familieslbl"
+        Me.Familieslbl.Size = New System.Drawing.Size(93, 24)
+        Me.Familieslbl.TabIndex = 0
+        Me.Familieslbl.Text = "Families"
+        '
+        'LinePnl
+        '
+        Me.LinePnl.BackColor = System.Drawing.Color.Black
+        Me.LinePnl.Location = New System.Drawing.Point(0, 250)
+        Me.LinePnl.Name = "LinePnl"
+        Me.LinePnl.Size = New System.Drawing.Size(1700, 2)
+        Me.LinePnl.TabIndex = 0
+        '
+        'btnSaveFamily
+        '
+        Me.btnSaveFamily.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
+        Me.btnSaveFamily.FlatAppearance.BorderSize = 0
+        Me.btnSaveFamily.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnSaveFamily.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnSaveFamily.Location = New System.Drawing.Point(203, 172)
+        Me.btnSaveFamily.Name = "btnSaveFamily"
+        Me.btnSaveFamily.Size = New System.Drawing.Size(1232, 36)
+        Me.btnSaveFamily.TabIndex = 4
+        Me.btnSaveFamily.Text = "Save Family"
+        Me.btnSaveFamily.UseVisualStyleBackColor = False
+        '
+        'txtFamilyName
+        '
+        Me.txtFamilyName.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.txtFamilyName.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtFamilyName.Location = New System.Drawing.Point(623, 129)
+        Me.txtFamilyName.Name = "txtFamilyName"
+        Me.txtFamilyName.Size = New System.Drawing.Size(384, 26)
+        Me.txtFamilyName.TabIndex = 2
+        '
+        'FamilyNamelbl
+        '
+        Me.FamilyNamelbl.AutoSize = True
+        Me.FamilyNamelbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FamilyNamelbl.Location = New System.Drawing.Point(619, 106)
+        Me.FamilyNamelbl.Name = "FamilyNamelbl"
+        Me.FamilyNamelbl.Size = New System.Drawing.Size(107, 19)
+        Me.FamilyNamelbl.TabIndex = 0
+        Me.FamilyNamelbl.Text = "Family Name"
+        '
+        'Householdlbl
+        '
+        Me.Householdlbl.AutoSize = True
+        Me.Householdlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Householdlbl.Location = New System.Drawing.Point(199, 106)
+        Me.Householdlbl.Name = "Householdlbl"
+        Me.Householdlbl.Size = New System.Drawing.Size(93, 19)
+        Me.Householdlbl.TabIndex = 0
+        Me.Householdlbl.Text = "Household"
+        '
+        'txtHousehold
+        '
+        Me.txtHousehold.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.txtHousehold.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtHousehold.Location = New System.Drawing.Point(203, 129)
+        Me.txtHousehold.Name = "txtHousehold"
+        Me.txtHousehold.Size = New System.Drawing.Size(384, 26)
+        Me.txtHousehold.TabIndex = 1
+        '
+        'FamilyHeadlbl
+        '
+        Me.FamilyHeadlbl.AutoSize = True
+        Me.FamilyHeadlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FamilyHeadlbl.Location = New System.Drawing.Point(1047, 106)
+        Me.FamilyHeadlbl.Name = "FamilyHeadlbl"
+        Me.FamilyHeadlbl.Size = New System.Drawing.Size(103, 19)
+        Me.FamilyHeadlbl.TabIndex = 0
+        Me.FamilyHeadlbl.Text = "Family Head"
+        '
+        'familyheadcb
+        '
+        Me.familyheadcb.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.familyheadcb.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.familyheadcb.FormattingEnabled = True
+        Me.familyheadcb.Location = New System.Drawing.Point(1051, 129)
+        Me.familyheadcb.Name = "familyheadcb"
+        Me.familyheadcb.Size = New System.Drawing.Size(384, 26)
+        Me.familyheadcb.TabIndex = 3
         '
         'HouseholdAddNewFamily_Form
         '
@@ -243,16 +244,16 @@ Partial Class HouseholdAddNewFamily_Form
     Friend WithEvents txtFamilyName As TextBox
     Friend WithEvents FamilyNamelbl As Label
     Friend WithEvents Householdlbl As Label
-    Friend WithEvents txtFamilyHead As TextBox
     Friend WithEvents txtHousehold As TextBox
     Friend WithEvents FamilyHeadlbl As Label
     Friend WithEvents btnSaveFamily As Button
     Friend WithEvents Familieslbl As Label
     Friend WithEvents LinePnl As Panel
     Friend WithEvents FamilyMembersDGV As DataGridView
-    Friend WithEvents cbCivilStatus As ComboBox
+    Friend WithEvents cbRelationshipType As ComboBox
     Friend WithEvents CivilStatuslbl As Label
     Friend WithEvents btnBack As Button
     Friend WithEvents BtnSaveRelationship As Button
     Friend WithEvents AddNewFamilylbl As Label
+    Friend WithEvents familyheadcb As ComboBox
 End Class

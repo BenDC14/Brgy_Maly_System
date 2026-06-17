@@ -11,6 +11,7 @@ Public Class BrgyOfficials_Form
     Private photoFilePath As String = ""
     Private editingOfficialId As Integer = -1
     Private isEditMode As Boolean = False
+    Private editingIsActive As Boolean = True   ' tracks IsActive of the record being edited
 
     ''' <summary>
     ''' Constructor - Accept optional official ID for editing
@@ -63,9 +64,8 @@ Public Class BrgyOfficials_Form
         )
 
         Dim panelLocal = pnl
-
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
+        AddHandler panelLocal.Paint, Sub(s, ev)
+                                         ev.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
                                      End Sub
     End Sub
 
@@ -82,7 +82,6 @@ Public Class BrgyOfficials_Form
         btn.Region = New Region(p)
 
         Dim btnLocal = btn
-
         AddHandler btn.Resize, Sub(s, args)
                                    Dim newPath As New GraphicsPath()
                                    newPath.AddArc(0, 0, radius, radius, 180, 90)
@@ -104,12 +103,15 @@ Public Class BrgyOfficials_Form
             "Barangay Kagawad",
             "SK Chairman",
             "Barangay Secretary",
-            "Barangay Treasurer"
+            "Barangay Treasurer",
+            "Barangay Adminstrator"
         })
     End Sub
 
     ''' <summary>
-    ''' Load official data for editing
+    ''' Load official data for editing.
+    ''' Also captures the IsActive flag so the quota check can exclude the
+    ''' record's own slot when the position is changed during editing.
     ''' </summary>
     Private Sub LoadOfficialData(officialId As Integer)
         Try
@@ -121,6 +123,9 @@ Public Class BrgyOfficials_Form
                 cbPosition.SelectedItem = row("Position").ToString()
                 TermStartDTP.Value = CDate(row("TermStart"))
                 TermEndDTP.Value = CDate(row("TermEnd"))
+
+                ' Capture the IsActive flag for quota-check logic
+                editingIsActive = (Convert.ToInt32(row("IsActive")) = 1)
 
                 ' === LOAD PHOTO ===
                 If Not IsDBNull(row("PhotoPath")) Then
@@ -182,7 +187,9 @@ Public Class BrgyOfficials_Form
     End Sub
 
     ''' <summary>
-    ''' Save Official button click
+    ''' Save Official button click.
+    ''' Quota violations (ErrorCode = 2) are surfaced with the prescribed
+    ''' blocking MessageBox before any database write occurs.
     ''' </summary>
     Private Sub BtnSaveOfficial_Click(sender As Object, e As EventArgs) Handles BtnSaveOfficial.Click
         Try
@@ -197,11 +204,17 @@ Public Class BrgyOfficials_Form
             Dim result As BrgyOfficialsLogic.OfficialResult
 
             If isEditMode Then
-                ' === UPDATE MODE ===
-                result = brgyOfficialsLogic.UpdateBarangayOfficial(editingOfficialId, firstName, lastName, position, termStart, termEnd, photoFilePath)
+                ' Pass editingIsActive so quota check knows whether to exclude
+                ' this record's own active slot from the count.
+                result = brgyOfficialsLogic.UpdateBarangayOfficial(
+                             editingOfficialId, firstName, lastName,
+                             position, termStart, termEnd,
+                             photoFilePath, isActive:=editingIsActive)
             Else
-                ' === ADD MODE ===
-                result = brgyOfficialsLogic.AddBarangayOfficial(firstName, lastName, position, termStart, termEnd, photoFilePath)
+                result = brgyOfficialsLogic.AddBarangayOfficial(
+                             firstName, lastName,
+                             position, termStart, termEnd,
+                             photoFilePath)
             End If
 
             If result.IsSuccess Then
@@ -214,7 +227,19 @@ Public Class BrgyOfficials_Form
                     Dim brgyInfoForm As New BrgyInfoAdding_Form()
                     Dashboard_Layout.CurrentInstance.LoadContentPanel(brgyInfoForm)
                 End If
+
+            ElseIf result.ErrorCode = 2 Then
+                ' ---------------------------------------------------------------
+                ' QUOTA LIMIT REACHED — show the prescribed blocking message box
+                ' The save operation is already blocked inside the Logic layer.
+                ' ---------------------------------------------------------------
+                MessageBox.Show(
+                    result.Message,
+                    "Active Quota Limit Reached",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning)
             Else
+                ' General validation / DB errors
                 MsgBox(result.Message, MsgBoxStyle.Exclamation, "Error")
             End If
 

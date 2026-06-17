@@ -22,6 +22,7 @@ Partial Class Audit_Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Audit_Form))
         Me.fillpanel = New System.Windows.Forms.Panel()
         Me.btnExportCSV = New System.Windows.Forms.Button()
         Me.btnExportExcel = New System.Windows.Forms.Button()
@@ -47,6 +48,9 @@ Partial Class Audit_Form
         Me.lblSearch = New System.Windows.Forms.Label()
         Me.LinePnl = New System.Windows.Forms.Panel()
         Me.lblAuditLogs = New System.Windows.Forms.Label()
+        Me.PrintDocuReports = New System.Drawing.Printing.PrintDocument()
+        Me.PrintPreviewDialogReports = New System.Windows.Forms.PrintPreviewDialog()
+        Me.PrintDialogReports = New System.Windows.Forms.PrintDialog()
         Me.fillpanel.SuspendLayout()
         CType(Me.dgvAudit, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -349,6 +353,20 @@ Partial Class Audit_Form
         Me.lblAuditLogs.TabIndex = 0
         Me.lblAuditLogs.Text = "Audit Logs"
         '
+        'PrintPreviewDialogReports
+        '
+        Me.PrintPreviewDialogReports.AutoScrollMargin = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogReports.AutoScrollMinSize = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogReports.ClientSize = New System.Drawing.Size(400, 300)
+        Me.PrintPreviewDialogReports.Enabled = True
+        Me.PrintPreviewDialogReports.Icon = CType(resources.GetObject("PrintPreviewDialogReports.Icon"), System.Drawing.Icon)
+        Me.PrintPreviewDialogReports.Name = "PrintPreviewDialogReports"
+        Me.PrintPreviewDialogReports.Visible = False
+        '
+        'PrintDialogReports
+        '
+        Me.PrintDialogReports.UseEXDialog = True
+        '
         'Audit_Form
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -392,4 +410,7 @@ Partial Class Audit_Form
     Friend WithEvents btnPage3 As Button
     Friend WithEvents btnExportCSV As Button
     Friend WithEvents btnExportExcel As Button
+    Friend WithEvents PrintDocuReports As Printing.PrintDocument
+    Friend WithEvents PrintPreviewDialogReports As PrintPreviewDialog
+    Friend WithEvents PrintDialogReports As PrintDialog
 End Class

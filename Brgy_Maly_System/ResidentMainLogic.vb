@@ -155,6 +155,10 @@ Public Class ResidentMainLogic
                     result.IsSuccess = True
                     result.Message = "Resident archived successfully."
                     result.ErrorCode = 0
+                    ' === LOG AUDIT TRAIL ===
+                    GlobalAuditLogger.Log("ResidentMain_Form", "ARCHIVE RESIDENT",
+                    LogInForm.CurrentUsername & " archived resident (ID: " & residentId & ")")
+
                 Else
                     result.Message = "Failed to archive resident."
                     result.ErrorCode = 1

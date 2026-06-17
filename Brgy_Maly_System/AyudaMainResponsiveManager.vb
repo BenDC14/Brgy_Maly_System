@@ -108,8 +108,7 @@ Public Class AyudaMainResponsiveManager
         ' === DATA GRID VIEW ===
         PositionDataGridView(panelWidth, panelHeight)
 
-        ' === ROW ACTION BUTTONS (Edit, Archive) ===
-        PositionRowActionButtons(panelWidth, panelHeight, scaleFactor)
+
     End Sub
 
     ''' <summary>
@@ -125,14 +124,53 @@ Public Class AyudaMainResponsiveManager
     ''' <summary>
     ''' Position top action buttons
     ''' Designer: btnRecordNewAyuda Location(12, 88), Size(226, 45)
+    '''           btnAudit Location(279, 88), Size(226, 45)
     ''' </summary>
     Private Sub PositionTopActionButtons(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        ' Record New Ayuda Button - Designer: Location(12, 88), Size(226, 45)
-        _form.btnRecordNewAyuda.Location = New Point(CInt(panelWidth * 0.007), CInt(panelHeight * 0.088))
-        _form.btnRecordNewAyuda.Size = New Size(CInt(panelWidth * 0.133), CInt(panelHeight * 0.045))
-        _form.btnRecordNewAyuda.Anchor = AnchorStyles.Top Or AnchorStyles.Left
-        _form.btnRecordNewAyuda.Font = New Font("Arial Narrow", 14.25F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
-        _form.btnRecordNewAyuda.Cursor = Cursors.Hand
+        Try
+            ' Record New Ayuda Button - Designer: Location(12, 88), Size(226, 45)
+            If _form.btnRecordNewAyuda IsNot Nothing Then
+                _form.btnRecordNewAyuda.Location = New Point(CInt(panelWidth * 0.007), CInt(panelHeight * 0.088))
+                _form.btnRecordNewAyuda.Size = New Size(CInt(panelWidth * 0.133), CInt(panelHeight * 0.045))
+                _form.btnRecordNewAyuda.Anchor = AnchorStyles.Top Or AnchorStyles.Left
+                _form.btnRecordNewAyuda.Font = New Font("Arial Narrow", 14.25F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+                _form.btnRecordNewAyuda.Cursor = Cursors.Hand
+            End If
+
+            ' Audit Ayuda Button - Designer: Location(279, 88), Size(226, 45)
+            If _form.btnAudit IsNot Nothing Then
+                _form.btnAudit.Location = New Point(CInt(panelWidth * 0.164), CInt(panelHeight * 0.088))
+                _form.btnAudit.Size = New Size(CInt(panelWidth * 0.133), CInt(panelHeight * 0.045))
+                _form.btnAudit.Anchor = AnchorStyles.Top Or AnchorStyles.Left
+                _form.btnAudit.Font = New Font("Arial Narrow", 14.25F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
+                _form.btnAudit.Cursor = Cursors.Hand
+                _form.btnAudit.BackColor = Color.FromArgb(159, 190, 168)
+                _form.btnAudit.FlatStyle = FlatStyle.Flat
+                _form.btnAudit.FlatAppearance.BorderSize = 0
+            End If
+
+        Catch ex As Exception
+            Debug.WriteLine("PositionTopActionButtons Error: " & ex.Message)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Re-apply button rounding to preserve rounded corners during resize
+    ''' </summary>
+    Private Sub ReApplyButtonRounding(btn As Button, radius As Integer)
+        Try
+            If btn Is Nothing Then Return
+
+            Dim p As New System.Drawing.Drawing2D.GraphicsPath()
+            p.AddArc(0, 0, radius, radius, 180, 90)
+            p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
+            p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
+            p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
+            p.CloseFigure()
+            btn.Region = New Region(p)
+        Catch ex As Exception
+            Debug.WriteLine("ReApplyButtonRounding Error: " & ex.Message)
+        End Try
     End Sub
 
     ''' <summary>
@@ -169,29 +207,7 @@ Public Class AyudaMainResponsiveManager
         _form.dgvResidentAyudas.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
     End Sub
 
-    ''' <summary>
-    ''' Position row action buttons (Edit, Archive)
-    ''' Designer: btnEdit Location(1465, 191) Size(85, 29), btnArchieve Location(1571, 191) Size(100, 29)
-    ''' </summary>
-    Private Sub PositionRowActionButtons(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        ' Edit Button - Designer: Location(1465, 191), Size(85, 29)
-        _form.btnEdit.Location = New Point(CInt(panelWidth * 0.862), CInt(panelHeight * 0.191))
-        _form.btnEdit.Size = New Size(CInt(panelWidth * 0.05), CInt(panelHeight * 0.029))
-        _form.btnEdit.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        _form.btnEdit.Font = New Font("Arial Narrow", 14.25F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
-        _form.btnEdit.Cursor = Cursors.Hand
 
-        ' Archive Button - Designer: Location(1571, 191), Size(100, 29)
-        _form.btnArchieve.Location = New Point(CInt(panelWidth * 0.924), CInt(panelHeight * 0.191))
-        _form.btnArchieve.Size = New Size(CInt(panelWidth * 0.059), CInt(panelHeight * 0.029))
-        _form.btnArchieve.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        _form.btnArchieve.Font = New Font("Arial Narrow", 14.25F * scaleFactor, FontStyle.Bold Or FontStyle.Italic)
-        _form.btnArchieve.Cursor = Cursors.Hand
-    End Sub
-
-    ''' <summary>
-    ''' Cleanup - remove event handlers to prevent memory leaks
-    ''' </summary>
     Public Sub Cleanup()
         Try
             resizeTimer.Stop()

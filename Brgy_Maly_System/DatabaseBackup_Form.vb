@@ -1,72 +1,91 @@
 ﻿Imports System.Drawing.Drawing2D
 
 Public Class DatabaseBackup_Form
-    ' === Responsive Manager Instance ===
     Private responsiveManager As DatabaseBackupResponsiveManager
+    Private backupLogic As New DatabaseBackupLogic()
 
     Private Sub DatabaseBackup_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
-        ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
+        Try
+            ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
 
-        ' === Apply Button Styling (Once - never reapply) ===
-        RoundButtonCorners(btnBacktoMain, 20)
-        RoundButtonCorners(btnStartBackup, 20)
-        RoundButtonCorners(btnBrowse, 20)
+            RoundButtonCorners(btnBacktoMain, 20)
+            RoundButtonCorners(btnStartBackup, 20)
+            RoundButtonCorners(btnBrowse, 20)
 
-        ' === Initialize Responsive Manager ===
-        responsiveManager = New DatabaseBackupResponsiveManager(Me)
-        responsiveManager.Initialize()
+            responsiveManager = New DatabaseBackupResponsiveManager(Me)
+            responsiveManager.Initialize()
+
+            txtFileLocation.ReadOnly = True
+
+        Catch ex As Exception
+            MsgBox("Error loading backup form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient background to panel
-    ''' </summary>
-    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
-        Dim startColor = ColorTranslator.FromHtml(startColorHex)
-        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+    Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
+        Try
+            Using folderDialog As New FolderBrowserDialog()
+                folderDialog.Description = "Select folder where the database backup will be saved"
+                folderDialog.ShowNewFolderButton = True
 
-        Dim brush As New LinearGradientBrush(
-            New Point(0, 0),
-            New Point(pnl.Width, 0),
-            startColor,
-            endColor
-        )
+                If folderDialog.ShowDialog() = DialogResult.OK Then
+                    txtFileLocation.Text = folderDialog.SelectedPath
+                End If
+            End Using
 
-        Dim panelLocal = pnl
-
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+        Catch ex As Exception
+            MsgBox("Error selecting folder: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Apply rounded corners to button (with resize handler)
-    ''' </summary>
-    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
-        Dim p As New GraphicsPath()
-        p.AddArc(0, 0, radius, radius, 180, 90)
-        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
-        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
-        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
-        p.CloseFigure()
-        btn.Region = New Region(p)
+    Private Sub btnStartBackup_Click(sender As Object, e As EventArgs) Handles btnStartBackup.Click
+        Try
+            Dim validationError As String = backupLogic.ValidateBackupInput(txtFilename.Text, txtFileLocation.Text)
 
-        Dim btnLocal = btn
+            If Not String.IsNullOrWhiteSpace(validationError) Then
+                MsgBox(validationError, MsgBoxStyle.Information, "Validation")
+                Return
+            End If
 
-        AddHandler btn.Resize, Sub(s, args)
-                                   Dim newPath As New GraphicsPath()
-                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
-                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
-                                   newPath.CloseFigure()
-                                   btnLocal.Region = New Region(newPath)
-                               End Sub
+            If MsgBox("Start database backup now?", MsgBoxStyle.Question Or MsgBoxStyle.YesNo, "Confirm Backup") = MsgBoxResult.No Then
+                Return
+            End If
+
+            btnStartBackup.Enabled = False
+            btnBrowse.Enabled = False
+            Application.DoEvents()
+
+            Dim result As DatabaseBackupLogic.BackupResult = backupLogic.StartBackup(
+                txtFilename.Text.Trim(),
+                txtFileLocation.Text.Trim(),
+                BackupNotesRtxt.Text.Trim(),
+                LogInForm.CurrentUserID
+            )
+
+            btnStartBackup.Enabled = True
+            btnBrowse.Enabled = True
+
+            If result.IsSuccess Then
+                MsgBox("Database backup completed successfully." & vbCrLf &
+                       "File saved to: " & result.FilePath,
+                       MsgBoxStyle.Information, "Backup Successful")
+
+                txtFilename.Clear()
+                txtFileLocation.Clear()
+                BackupNotesRtxt.Clear()
+            Else
+                MsgBox("Database backup failed." & vbCrLf &
+                       "Reason: " & result.ErrorMessage,
+                       MsgBoxStyle.Critical, "Backup Failed")
+            End If
+
+        Catch ex As Exception
+            btnStartBackup.Enabled = True
+            btnBrowse.Enabled = True
+            MsgBox("Error starting backup: " & ex.Message, MsgBoxStyle.Critical, "Error")
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Navigate back to Database Backup Main form
-    ''' </summary>
     Private Sub btnBacktoMain_Click(sender As Object, e As EventArgs) Handles btnBacktoMain.Click
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
@@ -77,32 +96,50 @@ Public Class DatabaseBackup_Form
             End If
         Catch ex As Exception
             MsgBox("Error loading form: " & ex.Message, MsgBoxStyle.Critical, "Error")
-            Debug.WriteLine("btnView_Click Error: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
+    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
+        Dim startColor = ColorTranslator.FromHtml(startColorHex)
+        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+
+        AddHandler pnl.Paint,
+            Sub(sender, e)
+                Using brush As New LinearGradientBrush(New Point(0, 0), New Point(pnl.Width, 0), startColor, endColor)
+                    e.Graphics.FillRectangle(brush, pnl.ClientRectangle)
+                End Using
+            End Sub
+    End Sub
+
+    Private Sub RoundButtonCorners(btn As Button, ByVal radius As Integer)
+        ApplyButtonRoundedRegion(btn, radius)
+
+        AddHandler btn.Resize,
+            Sub(s, args)
+                ApplyButtonRoundedRegion(btn, radius)
+            End Sub
+    End Sub
+
+    Private Sub ApplyButtonRoundedRegion(btn As Button, radius As Integer)
+        If btn Is Nothing Then Return
+        If btn.Width <= 0 OrElse btn.Height <= 0 Then Return
+
+        Using p As New GraphicsPath()
+            p.AddArc(0, 0, radius, radius, 180, 90)
+            p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
+            p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
+            p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
+            p.CloseFigure()
+            btn.Region = New Region(p)
+        End Using
+    End Sub
+
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         If responsiveManager IsNot Nothing Then
             responsiveManager.Cleanup()
         End If
+
         MyBase.OnFormClosing(e)
     End Sub
-
-    ' ========================================
-    ' TODO: Add your business logic methods here
-    ' ========================================
-    ' - Browse button click handler (FolderBrowserDialog)
-    ' - Start Backup button click handler
-    ' - Validate file name (no special characters)
-    ' - Validate file location (path exists)
-    ' - Database backup logic (mysqldump or SQL backup)
-    ' - Save backup notes to database/log
-    ' - Progress indication (if needed)
-    ' - Success/Error message handling
-    ' - Log backup operation with timestamp
-    ' ========================================
 
 End Class

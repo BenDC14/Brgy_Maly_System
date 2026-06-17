@@ -201,11 +201,11 @@ Public Class ForgetPass
         confirmPasswordVisible = Not confirmPasswordVisible
 
         If confirmPasswordVisible Then
-            ConfirmPassTxt.PasswordChar = ChrW(0)     ' Show password
-            SeePassBtn.Image = My.Resources.eyesopen
+            ConfirmPassTxt.PasswordChar = ChrW(0)
+            SeePassBtn2.Image = My.Resources.eyesopen
         Else
-            ConfirmPassTxt.PasswordChar = ChrW(42)    ' Hide password
-            SeePassBtn.Image = My.Resources.closeeye
+            ConfirmPassTxt.PasswordChar = ChrW(42)
+            SeePassBtn2.Image = My.Resources.closeeye
         End If
 
     End Sub

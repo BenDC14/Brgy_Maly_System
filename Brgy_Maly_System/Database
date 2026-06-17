@@ -1,6 +1,6 @@
 # Brgy_Maly_System Database Schema
 # Database: barangay_maly
-# Last Updated: April 02, 2026
+# Last Updated: April 20, 2026
 
 ## ADDRESS TABLE
 - AddressID (INT, PK, auto_increment)
@@ -37,7 +37,14 @@
 
 ## BARANGAYAID TABLE
 - AidId (INT, PK, auto_increment)
-- AidName (VARCHAR(50))
+- source_agency (VARCHAR(255))
+- program_title (VARCHAR(255))
+- assistance_type (VARCHAR(50))
+- provision_details (TEXT)
+- max_slots (INT)
+- start_date (DATE)
+- end_date (DATE)
+- is_active (TINYINT)
 
 ## BARANGAYINFORMATION TABLE
 - BarangayInfoID (INT, PK, auto_increment)
@@ -202,7 +209,7 @@
 - userpermissions.FormID ? forms.FormID
 - userpermissions.AssignedBy ? useraccounts.UserId
 
-## TOTAL TABLES: 17
+## TOTAL TABLES: 21
 - address
 - audittrail
 - backuplogs
@@ -224,3 +231,7 @@
 - restorelogs
 - useraccounts
 - userpermissions
+
+## KEY CHANGES FROM PREVIOUS VERSION
+- **barangayaid table** - Updated with new columns: source_agency, program_title, assistance_type, provision_details, max_slots, start_date, end_date, is_active
+- All other tables remain consistent with previous schema

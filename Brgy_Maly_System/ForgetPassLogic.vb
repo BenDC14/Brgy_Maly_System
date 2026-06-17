@@ -152,10 +152,17 @@ Public Class ForgetPassLogic
                 Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                 If rowsAffected > 0 Then
+                    ' === LOG AUDIT TRAIL ===
+                    GlobalAuditLogger.Log("ForgetPass", "RESET PASSWORD",
+                    "User reset password for account: " & username)
+
                     result.IsSuccess = True
                     result.Message = "Password has been updated successfully."
                     result.ErrorCode = 0
                 Else
+                    ' === LOG AUDIT TRAIL ===
+                    GlobalAuditLogger.Log("ForgetPass", "RESET PASSWORD",
+                    "User failed to reset password for account: " & username)
                     result.ErrorCode = 1
                     result.Message = "Failed to update password. User not found."
                 End If

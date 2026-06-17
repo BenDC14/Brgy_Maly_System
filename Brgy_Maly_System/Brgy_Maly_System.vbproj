@@ -167,6 +167,22 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddNewCategoryLogic.vb" />
+    <Compile Include="AddNewCategoryResponsiveManager.vb" />
+    <Compile Include="AddNewCategory_Form.Designer.vb">
+      <DependentUpon>AddNewCategory_Form.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AddNewCategory_Form.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewRelationshipTypeLogic.vb" />
+    <Compile Include="AddNewRelationshipTypeResponsiveManager.vb" />
+    <Compile Include="AddNewRelationshipType_Form.Designer.vb">
+      <DependentUpon>AddNewRelationshipType_Form.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AddNewRelationshipType_Form.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AuditResponsiveManager.vb" />
     <Compile Include="Audit_Form.Designer.vb">
       <DependentUpon>Audit_Form.vb</DependentUpon>
@@ -174,6 +190,8 @@
     <Compile Include="Audit_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Audit_Logic.vb" />
+    <Compile Include="AyudaAddLogic.vb" />
     <Compile Include="AyudaAddResponsiveUIManager.vb" />
     <Compile Include="AyudaAdd_Form.Designer.vb">
       <DependentUpon>AyudaAdd_Form.vb</DependentUpon>
@@ -181,6 +199,15 @@
     <Compile Include="AyudaAdd_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AyudaAuditLogic.vb" />
+    <Compile Include="AyudaAuditResponsiveManager.vb" />
+    <Compile Include="AyudaAudit_Form.Designer.vb">
+      <DependentUpon>AyudaAudit_Form.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AyudaAudit_Form.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AyudaEditRecordingLogic.vb" />
     <Compile Include="AyudaEditRecordingResponsiveManager.vb" />
     <Compile Include="AyudaEditRecording_Form.Designer.vb">
       <DependentUpon>AyudaEditRecording_Form.vb</DependentUpon>
@@ -188,6 +215,7 @@
     <Compile Include="AyudaEditRecording_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AyudaMainLogic.vb" />
     <Compile Include="AyudaMainResponsiveManager.vb" />
     <Compile Include="AyudaMain_Form.Designer.vb">
       <DependentUpon>AyudaMain_Form.vb</DependentUpon>
@@ -195,6 +223,7 @@
     <Compile Include="AyudaMain_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AyudaRecordingLogic.vb" />
     <Compile Include="AyudaRecordingResponsiveManager.vb" />
     <Compile Include="AyudaRecording_Form.Designer.vb">
       <DependentUpon>AyudaRecording_Form.vb</DependentUpon>
@@ -219,7 +248,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ConnectDB_Module.vb" />
-    <Compile Include="Dashboard1ResponsiveManager.vb" />
+    <Compile Include="Dashboard1_Logic.vb" />
+    <Compile Include="Dashboard1_ResponsiveManager.vb" />
     <Compile Include="Dashboard1_Form.Designer.vb">
       <DependentUpon>Dashboard1_Form.vb</DependentUpon>
     </Compile>
@@ -232,12 +262,16 @@
     <Compile Include="Dashboard2_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dashboard2_Logic.vb" />
+    <Compile Include="Dashboard2_ResponsiveManager.vb" />
     <Compile Include="Dashboard3_Form.Designer.vb">
       <DependentUpon>Dashboard3_Form.vb</DependentUpon>
     </Compile>
     <Compile Include="Dashboard3_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dashboard3_Logic.vb" />
+    <Compile Include="Dashboard3_ResponsiveManager.vb" />
     <Compile Include="DashboardResponsiveUIManager.vb" />
     <Compile Include="Dashboard_Layout.Designer.vb">
       <DependentUpon>Dashboard_Layout.vb</DependentUpon>
@@ -245,6 +279,8 @@
     <Compile Include="Dashboard_Layout.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DatabaseBackupLogic.vb" />
+    <Compile Include="DatabaseBackupMainLogic.vb" />
     <Compile Include="DatabaseBackupMainResponsiveManager.vb" />
     <Compile Include="DatabaseBackupMain_Form.Designer.vb">
       <DependentUpon>DatabaseBackupMain_Form.vb</DependentUpon>
@@ -259,6 +295,7 @@
     <Compile Include="DatabaseBackup_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DatabaseDownloadLogsLogic.vb" />
     <Compile Include="DatabaseDownloadLogsResponsiveManager.vb" />
     <Compile Include="DatabaseDownloadLogs_Form.Designer.vb">
       <DependentUpon>DatabaseDownloadLogs_Form.vb</DependentUpon>
@@ -266,6 +303,7 @@
     <Compile Include="DatabaseDownloadLogs_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DatabaseRestoreLogic.vb" />
     <Compile Include="DatabaseRestoreResponsiveManager.vb" />
     <Compile Include="DatabaseRestore_Form.Designer.vb">
       <DependentUpon>DatabaseRestore_Form.vb</DependentUpon>
@@ -273,6 +311,7 @@
     <Compile Include="DatabaseRestore_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DatabaseViewLogic.vb" />
     <Compile Include="DatabaseViewResponsiveManager.vb" />
     <Compile Include="DatabaseView_Form.Designer.vb">
       <DependentUpon>DatabaseView_Form.vb</DependentUpon>
@@ -289,7 +328,9 @@
     </Compile>
     <Compile Include="ForgetPassLogic.vb" />
     <Compile Include="ForgetPassResponsiveUIManager.vb" />
+    <Compile Include="GlobalAuditLogger.vb" />
     <Compile Include="HouseholdAddingLogic.vb" />
+    <Compile Include="HouseholdAddingNewFamilyLogic.vb" />
     <Compile Include="HouseholdAddingResponsiveManager.vb" />
     <Compile Include="HouseholdAdding_Form.Designer.vb">
       <DependentUpon>HouseholdAdding_Form.vb</DependentUpon>
@@ -304,6 +345,7 @@
     <Compile Include="HouseholdAddNewFamily_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="HouseholdEditFamilyLogic.vb" />
     <Compile Include="HouseholdEditFamilyResponsiveManager.vb" />
     <Compile Include="HouseholdEditFamily_Form.Designer.vb">
       <DependentUpon>HouseholdEditFamily_Form.vb</DependentUpon>
@@ -319,6 +361,9 @@
     <Compile Include="HouseholdEdit_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="HouseholdEdit_Logic.vb" />
+    <Compile Include="HouseholdEdit_ResponsiveManager.vb" />
+    <Compile Include="HouseholdFamilyResidentsLogic.vb" />
     <Compile Include="HouseholdFamilyResidentsResponsiveManager.vb" />
     <Compile Include="HouseholdFamilyResidents_Form.Designer.vb">
       <DependentUpon>HouseholdFamilyResidents_Form.vb</DependentUpon>
@@ -334,6 +379,7 @@
     <Compile Include="HouseholdMain_Form.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="HouseholdViewFamilyLogic.vb" />
     <Compile Include="HouseholdViewFamilyResponsiveManager.vb" />
     <Compile Include="HouseholdViewFamily_Form.Designer.vb">
       <DependentUpon>HouseholdViewFamily_Form.vb</DependentUpon>
@@ -381,6 +427,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="NewReportTypeLogic..vb" />
     <Compile Include="NewReportTypeResponsiveManager.vb" />
     <Compile Include="NewReportType_Form.Designer.vb">
       <DependentUpon>NewReportType_Form.vb</DependentUpon>
@@ -389,6 +436,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PasswordEncryption.vb" />
+    <Compile Include="ReportsMainLogic.vb" />
     <Compile Include="ReportsMainResponsiveManager.vb" />
     <Compile Include="ReportsMain_Form.Designer.vb">
       <DependentUpon>ReportsMain_Form.vb</DependentUpon>
@@ -414,6 +462,7 @@
     </Compile>
     <Compile Include="ResponsiveUIManager.vb" />
     <Compile Include="UIUtilities.vb" />
+    <Compile Include="ViewGeneratedReportsLogic.vb" />
     <Compile Include="ViewGeneratedReportsResponsiveManager.vb" />
     <Compile Include="ViewGeneratedReports_Form.Designer.vb">
       <DependentUpon>ViewGeneratedReports_Form.vb</DependentUpon>
@@ -423,11 +472,20 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddNewCategory_Form.resx">
+      <DependentUpon>AddNewCategory_Form.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddNewRelationshipType_Form.resx">
+      <DependentUpon>AddNewRelationshipType_Form.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Audit_Form.resx">
       <DependentUpon>Audit_Form.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AyudaAdd_Form.resx">
       <DependentUpon>AyudaAdd_Form.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AyudaAudit_Form.resx">
+      <DependentUpon>AyudaAudit_Form.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AyudaEditRecording_Form.resx">
       <DependentUpon>AyudaEditRecording_Form.vb</DependentUpon>
@@ -625,6 +683,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Database" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bonds.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\family relationship.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\demographic.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="..\packages\Syncfusion.PdfToImageConverter.WinForms.32.1.24\build\net462\Syncfusion.PdfToImageConverter.WinForms.targets" Condition="Exists('..\packages\Syncfusion.PdfToImageConverter.WinForms.32.1.24\build\net462\Syncfusion.PdfToImageConverter.WinForms.targets')" />

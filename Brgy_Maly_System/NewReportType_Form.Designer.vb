@@ -23,6 +23,8 @@ Partial Class NewReportType_Form
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.FillPanel = New System.Windows.Forms.Panel()
+        Me.cbreportsubtype = New System.Windows.Forms.ComboBox()
+        Me.cbreporttype = New System.Windows.Forms.ComboBox()
         Me.btnAddNewReportSubType = New System.Windows.Forms.Button()
         Me.txtReportSubType = New System.Windows.Forms.TextBox()
         Me.lblReportSubType = New System.Windows.Forms.Label()
@@ -31,6 +33,8 @@ Partial Class NewReportType_Form
         Me.lblReportType = New System.Windows.Forms.Label()
         Me.lblAddReportTypes = New System.Windows.Forms.Label()
         Me.ExitBtn = New System.Windows.Forms.PictureBox()
+        Me.btnEditReportType = New System.Windows.Forms.Button()
+        Me.btnEditReportSubType = New System.Windows.Forms.Button()
         Me.FillPanel.SuspendLayout()
         CType(Me.ExitBtn, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -38,6 +42,10 @@ Partial Class NewReportType_Form
         'FillPanel
         '
         Me.FillPanel.BackColor = System.Drawing.Color.Transparent
+        Me.FillPanel.Controls.Add(Me.btnEditReportSubType)
+        Me.FillPanel.Controls.Add(Me.btnEditReportType)
+        Me.FillPanel.Controls.Add(Me.cbreportsubtype)
+        Me.FillPanel.Controls.Add(Me.cbreporttype)
         Me.FillPanel.Controls.Add(Me.btnAddNewReportSubType)
         Me.FillPanel.Controls.Add(Me.txtReportSubType)
         Me.FillPanel.Controls.Add(Me.lblReportSubType)
@@ -52,15 +60,35 @@ Partial Class NewReportType_Form
         Me.FillPanel.Size = New System.Drawing.Size(470, 485)
         Me.FillPanel.TabIndex = 0
         '
+        'cbreportsubtype
+        '
+        Me.cbreportsubtype.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.cbreportsubtype.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbreportsubtype.FormattingEnabled = True
+        Me.cbreportsubtype.Location = New System.Drawing.Point(30, 312)
+        Me.cbreportsubtype.Name = "cbreportsubtype"
+        Me.cbreportsubtype.Size = New System.Drawing.Size(248, 30)
+        Me.cbreportsubtype.TabIndex = 5
+        '
+        'cbreporttype
+        '
+        Me.cbreporttype.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.cbreporttype.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbreporttype.FormattingEnabled = True
+        Me.cbreporttype.Location = New System.Drawing.Point(30, 162)
+        Me.cbreporttype.Name = "cbreporttype"
+        Me.cbreporttype.Size = New System.Drawing.Size(248, 30)
+        Me.cbreporttype.TabIndex = 1
+        '
         'btnAddNewReportSubType
         '
         Me.btnAddNewReportSubType.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
         Me.btnAddNewReportSubType.FlatAppearance.BorderSize = 0
         Me.btnAddNewReportSubType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnAddNewReportSubType.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnAddNewReportSubType.Location = New System.Drawing.Point(110, 364)
+        Me.btnAddNewReportSubType.Location = New System.Drawing.Point(30, 357)
         Me.btnAddNewReportSubType.Name = "btnAddNewReportSubType"
-        Me.btnAddNewReportSubType.Size = New System.Drawing.Size(245, 47)
+        Me.btnAddNewReportSubType.Size = New System.Drawing.Size(229, 47)
         Me.btnAddNewReportSubType.TabIndex = 7
         Me.btnAddNewReportSubType.Text = "Add New Report Sub Type"
         Me.btnAddNewReportSubType.UseVisualStyleBackColor = False
@@ -69,10 +97,10 @@ Partial Class NewReportType_Form
         '
         Me.txtReportSubType.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.txtReportSubType.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtReportSubType.Location = New System.Drawing.Point(30, 312)
+        Me.txtReportSubType.Location = New System.Drawing.Point(284, 312)
         Me.txtReportSubType.Name = "txtReportSubType"
-        Me.txtReportSubType.Size = New System.Drawing.Size(404, 29)
-        Me.txtReportSubType.TabIndex = 3
+        Me.txtReportSubType.Size = New System.Drawing.Size(150, 29)
+        Me.txtReportSubType.TabIndex = 6
         '
         'lblReportSubType
         '
@@ -81,7 +109,7 @@ Partial Class NewReportType_Form
         Me.lblReportSubType.Location = New System.Drawing.Point(26, 287)
         Me.lblReportSubType.Name = "lblReportSubType"
         Me.lblReportSubType.Size = New System.Drawing.Size(172, 22)
-        Me.lblReportSubType.TabIndex = 5
+        Me.lblReportSubType.TabIndex = 0
         Me.lblReportSubType.Text = "Report Sub Type:"
         '
         'btnAddNewReportType
@@ -90,10 +118,10 @@ Partial Class NewReportType_Form
         Me.btnAddNewReportType.FlatAppearance.BorderSize = 0
         Me.btnAddNewReportType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnAddNewReportType.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnAddNewReportType.Location = New System.Drawing.Point(110, 214)
+        Me.btnAddNewReportType.Location = New System.Drawing.Point(30, 212)
         Me.btnAddNewReportType.Name = "btnAddNewReportType"
-        Me.btnAddNewReportType.Size = New System.Drawing.Size(245, 47)
-        Me.btnAddNewReportType.TabIndex = 2
+        Me.btnAddNewReportType.Size = New System.Drawing.Size(215, 47)
+        Me.btnAddNewReportType.TabIndex = 3
         Me.btnAddNewReportType.Text = "Add New Report Type"
         Me.btnAddNewReportType.UseVisualStyleBackColor = False
         '
@@ -101,10 +129,10 @@ Partial Class NewReportType_Form
         '
         Me.txtReportType.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.txtReportType.Font = New System.Drawing.Font("Arial", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtReportType.Location = New System.Drawing.Point(30, 162)
+        Me.txtReportType.Location = New System.Drawing.Point(284, 162)
         Me.txtReportType.Name = "txtReportType"
-        Me.txtReportType.Size = New System.Drawing.Size(404, 29)
-        Me.txtReportType.TabIndex = 1
+        Me.txtReportType.Size = New System.Drawing.Size(150, 29)
+        Me.txtReportType.TabIndex = 2
         '
         'lblReportType
         '
@@ -123,7 +151,7 @@ Partial Class NewReportType_Form
         Me.lblAddReportTypes.Location = New System.Drawing.Point(103, 29)
         Me.lblAddReportTypes.Name = "lblAddReportTypes"
         Me.lblAddReportTypes.Size = New System.Drawing.Size(250, 32)
-        Me.lblAddReportTypes.TabIndex = 3
+        Me.lblAddReportTypes.TabIndex = 0
         Me.lblAddReportTypes.Text = "Add Report Types"
         '
         'ExitBtn
@@ -136,6 +164,32 @@ Partial Class NewReportType_Form
         Me.ExitBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.ExitBtn.TabIndex = 2
         Me.ExitBtn.TabStop = False
+        '
+        'btnEditReportType
+        '
+        Me.btnEditReportType.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
+        Me.btnEditReportType.FlatAppearance.BorderSize = 0
+        Me.btnEditReportType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnEditReportType.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnEditReportType.Location = New System.Drawing.Point(251, 212)
+        Me.btnEditReportType.Name = "btnEditReportType"
+        Me.btnEditReportType.Size = New System.Drawing.Size(207, 47)
+        Me.btnEditReportType.TabIndex = 4
+        Me.btnEditReportType.Text = "Edit Report Type"
+        Me.btnEditReportType.UseVisualStyleBackColor = False
+        '
+        'btnEditReportSubType
+        '
+        Me.btnEditReportSubType.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
+        Me.btnEditReportSubType.FlatAppearance.BorderSize = 0
+        Me.btnEditReportSubType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnEditReportSubType.Font = New System.Drawing.Font("Arial Narrow", 14.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnEditReportSubType.Location = New System.Drawing.Point(265, 357)
+        Me.btnEditReportSubType.Name = "btnEditReportSubType"
+        Me.btnEditReportSubType.Size = New System.Drawing.Size(193, 47)
+        Me.btnEditReportSubType.TabIndex = 8
+        Me.btnEditReportSubType.Text = "Edit Report Sub Type"
+        Me.btnEditReportSubType.UseVisualStyleBackColor = False
         '
         'NewReportType_Form
         '
@@ -162,7 +216,11 @@ Partial Class NewReportType_Form
     Friend WithEvents lblReportType As Label
     Friend WithEvents txtReportType As TextBox
     Friend WithEvents btnAddNewReportSubType As Button
-    Friend WithEvents txtReportSubType As TextBox
     Friend WithEvents lblReportSubType As Label
     Friend WithEvents btnAddNewReportType As Button
+    Friend WithEvents cbreportsubtype As ComboBox
+    Friend WithEvents cbreporttype As ComboBox
+    Friend WithEvents txtReportSubType As TextBox
+    Friend WithEvents btnEditReportSubType As Button
+    Friend WithEvents btnEditReportType As Button
 End Class

@@ -23,23 +23,15 @@ Partial Class ResidentAdding_Form
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.fillpanel = New System.Windows.Forms.Panel()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.CategoriesCLB = New System.Windows.Forms.CheckedListBox()
+        Me.cbHouseholdNum = New System.Windows.Forms.ComboBox()
         Me.Suffixlbl = New System.Windows.Forms.Label()
         Me.btnBack = New System.Windows.Forms.Button()
         Me.BtnAddResident = New System.Windows.Forms.Button()
         Me.txtAdditionalInfo = New System.Windows.Forms.TextBox()
         Me.AdditionalInforlbl = New System.Windows.Forms.Label()
         Me.Categorylbl = New System.Windows.Forms.Label()
-        Me.cbIndigenousPeople = New System.Windows.Forms.CheckBox()
-        Me.cbInhabitant = New System.Windows.Forms.CheckBox()
-        Me.cbHead = New System.Windows.Forms.CheckBox()
-        Me.cbOutofSchoolChildren = New System.Windows.Forms.CheckBox()
-        Me.cbOFW = New System.Windows.Forms.CheckBox()
-        Me.cbUnemployed = New System.Windows.Forms.CheckBox()
-        Me.cbEmployed = New System.Windows.Forms.CheckBox()
-        Me.cbSoloParent = New System.Windows.Forms.CheckBox()
-        Me.cbStudent = New System.Windows.Forms.CheckBox()
-        Me.cbPWD = New System.Windows.Forms.CheckBox()
-        Me.cbSeniorCitizen = New System.Windows.Forms.CheckBox()
         Me.LinePnl7 = New System.Windows.Forms.Panel()
         Me.btnSearch = New System.Windows.Forms.Button()
         Me.txtSearch = New System.Windows.Forms.TextBox()
@@ -48,7 +40,6 @@ Partial Class ResidentAdding_Form
         Me.AddressInfolbl = New System.Windows.Forms.Label()
         Me.HouseholdNumlbl = New System.Windows.Forms.Label()
         Me.HouseholdInfolbl = New System.Windows.Forms.Label()
-        Me.LinePnl6 = New System.Windows.Forms.Panel()
         Me.CbEducationalStatus = New System.Windows.Forms.ComboBox()
         Me.EducationalStatuslbl = New System.Windows.Forms.Label()
         Me.CbEducationLevel = New System.Windows.Forms.ComboBox()
@@ -91,13 +82,14 @@ Partial Class ResidentAdding_Form
         Me.PersonalInfolbl = New System.Windows.Forms.Label()
         Me.LinePnl = New System.Windows.Forms.Panel()
         Me.ResidentInfolbl = New System.Windows.Forms.Label()
-        Me.cbHouseholdNum = New System.Windows.Forms.ComboBox()
         Me.fillpanel.SuspendLayout()
         Me.SuspendLayout()
         '
         'fillpanel
         '
         Me.fillpanel.BackColor = System.Drawing.Color.Transparent
+        Me.fillpanel.Controls.Add(Me.Panel1)
+        Me.fillpanel.Controls.Add(Me.CategoriesCLB)
         Me.fillpanel.Controls.Add(Me.cbHouseholdNum)
         Me.fillpanel.Controls.Add(Me.Suffixlbl)
         Me.fillpanel.Controls.Add(Me.btnBack)
@@ -105,17 +97,6 @@ Partial Class ResidentAdding_Form
         Me.fillpanel.Controls.Add(Me.txtAdditionalInfo)
         Me.fillpanel.Controls.Add(Me.AdditionalInforlbl)
         Me.fillpanel.Controls.Add(Me.Categorylbl)
-        Me.fillpanel.Controls.Add(Me.cbIndigenousPeople)
-        Me.fillpanel.Controls.Add(Me.cbInhabitant)
-        Me.fillpanel.Controls.Add(Me.cbHead)
-        Me.fillpanel.Controls.Add(Me.cbOutofSchoolChildren)
-        Me.fillpanel.Controls.Add(Me.cbOFW)
-        Me.fillpanel.Controls.Add(Me.cbUnemployed)
-        Me.fillpanel.Controls.Add(Me.cbEmployed)
-        Me.fillpanel.Controls.Add(Me.cbSoloParent)
-        Me.fillpanel.Controls.Add(Me.cbStudent)
-        Me.fillpanel.Controls.Add(Me.cbPWD)
-        Me.fillpanel.Controls.Add(Me.cbSeniorCitizen)
         Me.fillpanel.Controls.Add(Me.LinePnl7)
         Me.fillpanel.Controls.Add(Me.btnSearch)
         Me.fillpanel.Controls.Add(Me.txtSearch)
@@ -124,7 +105,6 @@ Partial Class ResidentAdding_Form
         Me.fillpanel.Controls.Add(Me.AddressInfolbl)
         Me.fillpanel.Controls.Add(Me.HouseholdNumlbl)
         Me.fillpanel.Controls.Add(Me.HouseholdInfolbl)
-        Me.fillpanel.Controls.Add(Me.LinePnl6)
         Me.fillpanel.Controls.Add(Me.CbEducationalStatus)
         Me.fillpanel.Controls.Add(Me.EducationalStatuslbl)
         Me.fillpanel.Controls.Add(Me.CbEducationLevel)
@@ -173,6 +153,33 @@ Partial Class ResidentAdding_Form
         Me.fillpanel.Size = New System.Drawing.Size(1700, 1004)
         Me.fillpanel.TabIndex = 0
         '
+        'Panel1
+        '
+        Me.Panel1.BackColor = System.Drawing.Color.Black
+        Me.Panel1.Location = New System.Drawing.Point(808, 615)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(2, 284)
+        Me.Panel1.TabIndex = 44
+        '
+        'CategoriesCLB
+        '
+        Me.CategoriesCLB.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CategoriesCLB.FormattingEnabled = True
+        Me.CategoriesCLB.Location = New System.Drawing.Point(844, 644)
+        Me.CategoriesCLB.Name = "CategoriesCLB"
+        Me.CategoriesCLB.Size = New System.Drawing.Size(824, 184)
+        Me.CategoriesCLB.TabIndex = 22
+        '
+        'cbHouseholdNum
+        '
+        Me.cbHouseholdNum.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
+        Me.cbHouseholdNum.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbHouseholdNum.FormattingEnabled = True
+        Me.cbHouseholdNum.Location = New System.Drawing.Point(46, 753)
+        Me.cbHouseholdNum.Name = "cbHouseholdNum"
+        Me.cbHouseholdNum.Size = New System.Drawing.Size(705, 26)
+        Me.cbHouseholdNum.TabIndex = 42
+        '
         'Suffixlbl
         '
         Me.Suffixlbl.AutoSize = True
@@ -213,16 +220,16 @@ Partial Class ResidentAdding_Form
         '
         Me.txtAdditionalInfo.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.txtAdditionalInfo.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtAdditionalInfo.Location = New System.Drawing.Point(46, 855)
+        Me.txtAdditionalInfo.Location = New System.Drawing.Point(844, 853)
         Me.txtAdditionalInfo.Name = "txtAdditionalInfo"
-        Me.txtAdditionalInfo.Size = New System.Drawing.Size(1527, 26)
-        Me.txtAdditionalInfo.TabIndex = 33
+        Me.txtAdditionalInfo.Size = New System.Drawing.Size(824, 26)
+        Me.txtAdditionalInfo.TabIndex = 23
         '
         'AdditionalInforlbl
         '
         Me.AdditionalInforlbl.AutoSize = True
         Me.AdditionalInforlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AdditionalInforlbl.Location = New System.Drawing.Point(42, 834)
+        Me.AdditionalInforlbl.Location = New System.Drawing.Point(840, 831)
         Me.AdditionalInforlbl.Name = "AdditionalInforlbl"
         Me.AdditionalInforlbl.Size = New System.Drawing.Size(177, 19)
         Me.AdditionalInforlbl.TabIndex = 0
@@ -232,132 +239,11 @@ Partial Class ResidentAdding_Form
         '
         Me.Categorylbl.AutoSize = True
         Me.Categorylbl.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Categorylbl.Location = New System.Drawing.Point(759, 768)
+        Me.Categorylbl.Location = New System.Drawing.Point(1222, 619)
         Me.Categorylbl.Name = "Categorylbl"
         Me.Categorylbl.Size = New System.Drawing.Size(101, 24)
         Me.Categorylbl.TabIndex = 0
         Me.Categorylbl.Text = "Category"
-        '
-        'cbIndigenousPeople
-        '
-        Me.cbIndigenousPeople.AutoSize = True
-        Me.cbIndigenousPeople.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbIndigenousPeople.Location = New System.Drawing.Point(1497, 799)
-        Me.cbIndigenousPeople.Name = "cbIndigenousPeople"
-        Me.cbIndigenousPeople.Size = New System.Drawing.Size(171, 23)
-        Me.cbIndigenousPeople.TabIndex = 32
-        Me.cbIndigenousPeople.Text = "Indigenous People"
-        Me.cbIndigenousPeople.UseVisualStyleBackColor = True
-        '
-        'cbInhabitant
-        '
-        Me.cbInhabitant.AutoSize = True
-        Me.cbInhabitant.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbInhabitant.Location = New System.Drawing.Point(1362, 799)
-        Me.cbInhabitant.Name = "cbInhabitant"
-        Me.cbInhabitant.Size = New System.Drawing.Size(104, 23)
-        Me.cbInhabitant.TabIndex = 31
-        Me.cbInhabitant.Text = "Inhabitant"
-        Me.cbInhabitant.UseVisualStyleBackColor = True
-        '
-        'cbHead
-        '
-        Me.cbHead.AutoSize = True
-        Me.cbHead.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbHead.Location = New System.Drawing.Point(1245, 799)
-        Me.cbHead.Name = "cbHead"
-        Me.cbHead.Size = New System.Drawing.Size(68, 23)
-        Me.cbHead.TabIndex = 40
-        Me.cbHead.Text = "Head"
-        Me.cbHead.UseVisualStyleBackColor = True
-        '
-        'cbOutofSchoolChildren
-        '
-        Me.cbOutofSchoolChildren.AutoSize = True
-        Me.cbOutofSchoolChildren.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbOutofSchoolChildren.Location = New System.Drawing.Point(999, 799)
-        Me.cbOutofSchoolChildren.Name = "cbOutofSchoolChildren"
-        Me.cbOutofSchoolChildren.Size = New System.Drawing.Size(201, 23)
-        Me.cbOutofSchoolChildren.TabIndex = 29
-        Me.cbOutofSchoolChildren.Text = "Out of School Children"
-        Me.cbOutofSchoolChildren.UseVisualStyleBackColor = True
-        '
-        'cbOFW
-        '
-        Me.cbOFW.AutoSize = True
-        Me.cbOFW.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbOFW.Location = New System.Drawing.Point(902, 799)
-        Me.cbOFW.Name = "cbOFW"
-        Me.cbOFW.Size = New System.Drawing.Size(65, 23)
-        Me.cbOFW.TabIndex = 28
-        Me.cbOFW.Text = "OFW"
-        Me.cbOFW.UseVisualStyleBackColor = True
-        '
-        'cbUnemployed
-        '
-        Me.cbUnemployed.AutoSize = True
-        Me.cbUnemployed.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbUnemployed.Location = New System.Drawing.Point(735, 799)
-        Me.cbUnemployed.Name = "cbUnemployed"
-        Me.cbUnemployed.Size = New System.Drawing.Size(125, 23)
-        Me.cbUnemployed.TabIndex = 27
-        Me.cbUnemployed.Text = "Unemployed"
-        Me.cbUnemployed.UseVisualStyleBackColor = True
-        '
-        'cbEmployed
-        '
-        Me.cbEmployed.AutoSize = True
-        Me.cbEmployed.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbEmployed.Location = New System.Drawing.Point(602, 799)
-        Me.cbEmployed.Name = "cbEmployed"
-        Me.cbEmployed.Size = New System.Drawing.Size(105, 23)
-        Me.cbEmployed.TabIndex = 26
-        Me.cbEmployed.Text = "Employed"
-        Me.cbEmployed.UseVisualStyleBackColor = True
-        '
-        'cbSoloParent
-        '
-        Me.cbSoloParent.AutoSize = True
-        Me.cbSoloParent.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbSoloParent.Location = New System.Drawing.Point(445, 799)
-        Me.cbSoloParent.Name = "cbSoloParent"
-        Me.cbSoloParent.Size = New System.Drawing.Size(117, 23)
-        Me.cbSoloParent.TabIndex = 25
-        Me.cbSoloParent.Text = "Solo Parent"
-        Me.cbSoloParent.UseVisualStyleBackColor = True
-        '
-        'cbStudent
-        '
-        Me.cbStudent.AutoSize = True
-        Me.cbStudent.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbStudent.Location = New System.Drawing.Point(312, 799)
-        Me.cbStudent.Name = "cbStudent"
-        Me.cbStudent.Size = New System.Drawing.Size(88, 23)
-        Me.cbStudent.TabIndex = 24
-        Me.cbStudent.Text = "Student"
-        Me.cbStudent.UseVisualStyleBackColor = True
-        '
-        'cbPWD
-        '
-        Me.cbPWD.AutoSize = True
-        Me.cbPWD.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbPWD.Location = New System.Drawing.Point(204, 799)
-        Me.cbPWD.Name = "cbPWD"
-        Me.cbPWD.Size = New System.Drawing.Size(66, 23)
-        Me.cbPWD.TabIndex = 23
-        Me.cbPWD.Text = "PWD"
-        Me.cbPWD.UseVisualStyleBackColor = True
-        '
-        'cbSeniorCitizen
-        '
-        Me.cbSeniorCitizen.AutoSize = True
-        Me.cbSeniorCitizen.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbSeniorCitizen.Location = New System.Drawing.Point(29, 799)
-        Me.cbSeniorCitizen.Name = "cbSeniorCitizen"
-        Me.cbSeniorCitizen.Size = New System.Drawing.Size(135, 23)
-        Me.cbSeniorCitizen.TabIndex = 22
-        Me.cbSeniorCitizen.Text = "Senior Citizen"
-        Me.cbSeniorCitizen.UseVisualStyleBackColor = True
         '
         'LinePnl7
         '
@@ -373,9 +259,9 @@ Partial Class ResidentAdding_Form
         Me.btnSearch.FlatAppearance.BorderSize = 0
         Me.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnSearch.Font = New System.Drawing.Font("Arial Narrow", 12.0!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSearch.Location = New System.Drawing.Point(1417, 666)
+        Me.btnSearch.Location = New System.Drawing.Point(630, 682)
         Me.btnSearch.Name = "btnSearch"
-        Me.btnSearch.Size = New System.Drawing.Size(156, 26)
+        Me.btnSearch.Size = New System.Drawing.Size(119, 26)
         Me.btnSearch.TabIndex = 20
         Me.btnSearch.Text = "Search"
         Me.btnSearch.UseVisualStyleBackColor = False
@@ -384,16 +270,16 @@ Partial Class ResidentAdding_Form
         '
         Me.txtSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.txtSearch.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtSearch.Location = New System.Drawing.Point(1036, 666)
+        Me.txtSearch.Location = New System.Drawing.Point(46, 682)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(375, 26)
+        Me.txtSearch.Size = New System.Drawing.Size(564, 26)
         Me.txtSearch.TabIndex = 19
         '
         'lblSearch
         '
         Me.lblSearch.AutoSize = True
         Me.lblSearch.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblSearch.Location = New System.Drawing.Point(1032, 644)
+        Me.lblSearch.Location = New System.Drawing.Point(42, 660)
         Me.lblSearch.Name = "lblSearch"
         Me.lblSearch.Size = New System.Drawing.Size(69, 19)
         Me.lblSearch.TabIndex = 0
@@ -403,16 +289,16 @@ Partial Class ResidentAdding_Form
         '
         Me.txtAddressInfo.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
         Me.txtAddressInfo.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtAddressInfo.Location = New System.Drawing.Point(46, 719)
+        Me.txtAddressInfo.Location = New System.Drawing.Point(46, 831)
         Me.txtAddressInfo.Name = "txtAddressInfo"
-        Me.txtAddressInfo.Size = New System.Drawing.Size(1527, 26)
+        Me.txtAddressInfo.Size = New System.Drawing.Size(705, 26)
         Me.txtAddressInfo.TabIndex = 21
         '
         'AddressInfolbl
         '
         Me.AddressInfolbl.AutoSize = True
         Me.AddressInfolbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.AddressInfolbl.Location = New System.Drawing.Point(42, 698)
+        Me.AddressInfolbl.Location = New System.Drawing.Point(42, 798)
         Me.AddressInfolbl.Name = "AddressInfolbl"
         Me.AddressInfolbl.Size = New System.Drawing.Size(164, 19)
         Me.AddressInfolbl.TabIndex = 0
@@ -422,7 +308,7 @@ Partial Class ResidentAdding_Form
         '
         Me.HouseholdNumlbl.AutoSize = True
         Me.HouseholdNumlbl.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.HouseholdNumlbl.Location = New System.Drawing.Point(42, 644)
+        Me.HouseholdNumlbl.Location = New System.Drawing.Point(42, 731)
         Me.HouseholdNumlbl.Name = "HouseholdNumlbl"
         Me.HouseholdNumlbl.Size = New System.Drawing.Size(158, 19)
         Me.HouseholdNumlbl.TabIndex = 0
@@ -432,19 +318,11 @@ Partial Class ResidentAdding_Form
         '
         Me.HouseholdInfolbl.AutoSize = True
         Me.HouseholdInfolbl.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.HouseholdInfolbl.Location = New System.Drawing.Point(704, 619)
+        Me.HouseholdInfolbl.Location = New System.Drawing.Point(216, 621)
         Me.HouseholdInfolbl.Name = "HouseholdInfolbl"
         Me.HouseholdInfolbl.Size = New System.Drawing.Size(239, 24)
         Me.HouseholdInfolbl.TabIndex = 0
         Me.HouseholdInfolbl.Text = "Household Information"
-        '
-        'LinePnl6
-        '
-        Me.LinePnl6.BackColor = System.Drawing.Color.Black
-        Me.LinePnl6.Location = New System.Drawing.Point(0, 763)
-        Me.LinePnl6.Name = "LinePnl6"
-        Me.LinePnl6.Size = New System.Drawing.Size(1700, 2)
-        Me.LinePnl6.TabIndex = 41
         '
         'CbEducationalStatus
         '
@@ -852,16 +730,6 @@ Partial Class ResidentAdding_Form
         Me.ResidentInfolbl.TabIndex = 0
         Me.ResidentInfolbl.Text = "Resident Information"
         '
-        'cbHouseholdNum
-        '
-        Me.cbHouseholdNum.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer), CType(CType(237, Byte), Integer))
-        Me.cbHouseholdNum.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cbHouseholdNum.FormattingEnabled = True
-        Me.cbHouseholdNum.Location = New System.Drawing.Point(46, 666)
-        Me.cbHouseholdNum.Name = "cbHouseholdNum"
-        Me.cbHouseholdNum.Size = New System.Drawing.Size(947, 26)
-        Me.cbHouseholdNum.TabIndex = 42
-        '
         'ResidentAdding_Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -919,7 +787,6 @@ Partial Class ResidentAdding_Form
     Friend WithEvents CbEducationalStatus As ComboBox
     Friend WithEvents EducationalStatuslbl As Label
     Friend WithEvents HouseholdInfolbl As Label
-    Friend WithEvents LinePnl6 As Panel
     Friend WithEvents LinePnl4 As Panel
     Friend WithEvents LinePnl5 As Panel
     Friend WithEvents LinePnl3 As Panel
@@ -935,19 +802,10 @@ Partial Class ResidentAdding_Form
     Friend WithEvents txtAdditionalInfo As TextBox
     Friend WithEvents AdditionalInforlbl As Label
     Friend WithEvents Categorylbl As Label
-    Friend WithEvents cbIndigenousPeople As CheckBox
-    Friend WithEvents cbInhabitant As CheckBox
-    Friend WithEvents cbHead As CheckBox
-    Friend WithEvents cbOutofSchoolChildren As CheckBox
-    Friend WithEvents cbOFW As CheckBox
-    Friend WithEvents cbUnemployed As CheckBox
-    Friend WithEvents cbEmployed As CheckBox
-    Friend WithEvents cbSoloParent As CheckBox
-    Friend WithEvents cbStudent As CheckBox
-    Friend WithEvents cbPWD As CheckBox
-    Friend WithEvents cbSeniorCitizen As CheckBox
     Friend WithEvents btnBack As Button
     Friend WithEvents BtnAddResident As Button
     Friend WithEvents Suffixlbl As Label
     Friend WithEvents cbHouseholdNum As ComboBox
+    Friend WithEvents CategoriesCLB As CheckedListBox
+    Friend WithEvents Panel1 As Panel
 End Class

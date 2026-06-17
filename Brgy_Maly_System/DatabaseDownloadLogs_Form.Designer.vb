@@ -22,6 +22,7 @@ Partial Class DatabaseDownloadLogs_Form
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(DatabaseDownloadLogs_Form))
         Me.FillPanel = New System.Windows.Forms.Panel()
         Me.btnDownload = New System.Windows.Forms.Button()
         Me.cbExcel = New System.Windows.Forms.CheckBox()
@@ -33,6 +34,9 @@ Partial Class DatabaseDownloadLogs_Form
         Me.lblSelectLogType = New System.Windows.Forms.Label()
         Me.lblDownloadBackupAndRestoreLogs = New System.Windows.Forms.Label()
         Me.ExitBtn = New System.Windows.Forms.PictureBox()
+        Me.PrintDialogDatabase = New System.Windows.Forms.PrintDialog()
+        Me.PrintPreviewDialogDatabase = New System.Windows.Forms.PrintPreviewDialog()
+        Me.PrintDocuDatabase = New System.Drawing.Printing.PrintDocument()
         Me.FillPanel.SuspendLayout()
         CType(Me.ExitBtn, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -165,6 +169,20 @@ Partial Class DatabaseDownloadLogs_Form
         Me.ExitBtn.TabIndex = 2
         Me.ExitBtn.TabStop = False
         '
+        'PrintDialogDatabase
+        '
+        Me.PrintDialogDatabase.UseEXDialog = True
+        '
+        'PrintPreviewDialogDatabase
+        '
+        Me.PrintPreviewDialogDatabase.AutoScrollMargin = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogDatabase.AutoScrollMinSize = New System.Drawing.Size(0, 0)
+        Me.PrintPreviewDialogDatabase.ClientSize = New System.Drawing.Size(400, 300)
+        Me.PrintPreviewDialogDatabase.Enabled = True
+        Me.PrintPreviewDialogDatabase.Icon = CType(resources.GetObject("PrintPreviewDialogDatabase.Icon"), System.Drawing.Icon)
+        Me.PrintPreviewDialogDatabase.Name = "PrintPreviewDialogReports"
+        Me.PrintPreviewDialogDatabase.Visible = False
+        '
         'DatabaseDownloadLogs_Form
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -194,4 +212,7 @@ Partial Class DatabaseDownloadLogs_Form
     Friend WithEvents cbBackupLogs As CheckBox
     Friend WithEvents lblSelectLogType As Label
     Friend WithEvents btnDownload As Button
+    Friend WithEvents PrintDialogDatabase As PrintDialog
+    Friend WithEvents PrintPreviewDialogDatabase As PrintPreviewDialog
+    Friend WithEvents PrintDocuDatabase As Printing.PrintDocument
 End Class

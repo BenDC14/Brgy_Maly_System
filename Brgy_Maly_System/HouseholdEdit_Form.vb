@@ -1,64 +1,70 @@
-﻿Imports System.Drawing.Drawing2D
+﻿Imports System.Data
+Imports System.Drawing.Drawing2D
 
 Public Class HouseholdEdit_Form
-    ' === Service Layer (Business Logic) ===
-    Private householdEditLogic As New HouseholdEditLogic()
 
-    ' === Responsive Manager Instance ===
+    ' === Service / Logic layer instance ===
+    Private householdEditLogic As New HouseholdEdit_Logic()
+
+    ' === Responsive layout manager ===
     Private responsiveManager As HouseholdEditResponsiveManager
 
-    ' === UI State ===
+    ' === State ===
     Private editingHouseholdId As Integer = -1
-    Private householdData As HouseholdEditLogic.HouseholdAddressData
 
-    ''' <summary>
-    ''' Constructor - Accept household ID for editing
-    ''' </summary>
+    Private householdData As HouseholdEdit_Logic.HouseholdAddressData = Nothing
+
+    ' ─── Constructor ─────────────────────────────────────────────────────────────
+
     Public Sub New(Optional householdId As Integer = -1)
         InitializeComponent()
         editingHouseholdId = householdId
     End Sub
 
+    ' ─── Form Load ───────────────────────────────────────────────────────────────
+
     Private Sub HouseholdEdit_Form_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' === Apply Gradient ===
-        ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
+        Try
+            ApplyGradient(FillPanel, "#EDFFE9", "#FFFFFF")
 
-        ' === Apply Button Styling ===
-        RoundButtonCorners(BtnEditHousehold, 20)
-        RoundButtonCorners(btnBack, 20)
+            RoundButtonCorners(BtnEditHousehold, 20)
+            RoundButtonCorners(btnBack, 20)
+            RoundButtonCorners(btnSearchHeads, 16)
+            RoundButtonCorners(BtnSearchResident, 16)
 
-        ' === Initialize Responsive Manager ===
-        responsiveManager = New HouseholdEditResponsiveManager(Me)
-        responsiveManager.Initialize()
+            responsiveManager = New HouseholdEditResponsiveManager(Me)
+            responsiveManager.Initialize()
 
-        ' === Load Household Data ===
-        LoadHouseholdData()
+            ConfigureResidentGrid(FamilyHeadsDGV)
+            ConfigureResidentGrid(ResidentInHouseholdDGV)
 
-        ' === TODO: Load Family Heads (later implementation) ===
-        ' LoadFamilyHeads()
+            LoadHouseholdData()
+            LoadFamilyHeads()
+            LoadNonHeadResidents()
 
-        ' === TODO: Load Residents (later implementation) ===
-        ' LoadResidents()
+        Catch ex As Exception
+            MsgBox("Error loading household edit form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Debug.WriteLine("HouseholdEdit_Form_Load Error: " & ex.Message)
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Load household and address data
-    ''' </summary>
+    ' ─── Address / household fields ──────────────────────────────────────────────
+
     Private Sub LoadHouseholdData()
         Try
             If editingHouseholdId <= 0 Then
-                MsgBox("Invalid Household ID.", MsgBoxStyle.Critical, "Error")
+                MsgBox("Invalid household selected.", MsgBoxStyle.Critical, "Error")
                 Return
             End If
 
+            ' Call through the INSTANCE variable, not the class name
             householdData = householdEditLogic.GetHouseholdById(editingHouseholdId)
 
-            If householdData Is Nothing OrElse householdData.HouseholdID = 0 Then
+            If householdData Is Nothing OrElse householdData.HouseholdID <= 0 Then
                 MsgBox("Household not found.", MsgBoxStyle.Critical, "Error")
                 Return
             End If
 
-            ' === POPULATE FORM FIELDS ===
             txtHouseholdNumber.Text = householdData.HouseholdNumber
             txtHouseNumber.Text = householdData.HouseNumber
             txtBlockNumber.Text = householdData.BlockNumber
@@ -78,59 +84,144 @@ Public Class HouseholdEdit_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Apply gradient background to panel
-    ''' </summary>
-    Private Sub ApplyGradient(pnl As Control, ByVal startColorHex As String, ByVal endColorHex As String)
-        Dim startColor = ColorTranslator.FromHtml(startColorHex)
-        Dim endColor = ColorTranslator.FromHtml(endColorHex)
+    ' ─── Family Heads DataGridView ────────────────────────────────────────────────
 
-        Dim brush As New LinearGradientBrush(
-            New Point(0, 0),
-            New Point(pnl.Width, 0),
-            startColor,
-            endColor
-        )
+    Private Sub LoadFamilyHeads()
+        Try
+            If editingHouseholdId <= 0 Then Return
 
-        Dim panelLocal = pnl
+            ' ✅ Use the instance variable "householdEditLogic", NOT the class name
+            FamilyHeadsDGV.DataSource = householdEditLogic.GetFamilyHeadsByHousehold(
+    editingHouseholdId,
+    txtSearchFamilyHeads.Text.Trim()
+)
 
-        AddHandler panelLocal.Paint, Sub(sender, e)
-                                         e.Graphics.FillRectangle(brush, panelLocal.ClientRectangle)
-                                     End Sub
+            FormatResidentGridColumns(FamilyHeadsDGV)
+
+        Catch ex As Exception
+            MsgBox("Error loading family heads: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Debug.WriteLine("LoadFamilyHeads Error: " & ex.Message)
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Apply rounded corners to button
-    ''' </summary>
-    Private Sub RoundButtonCorners(ByRef btn As Button, ByVal radius As Integer)
-        Dim p As New GraphicsPath()
-        p.AddArc(0, 0, radius, radius, 180, 90)
-        p.AddArc(btn.Width - radius, 0, radius, radius, 270, 90)
-        p.AddArc(btn.Width - radius, btn.Height - radius, radius, radius, 0, 90)
-        p.AddArc(0, btn.Height - radius, radius, radius, 90, 90)
-        p.CloseFigure()
-        btn.Region = New Region(p)
+    ' ─── Non-Head Residents DataGridView ─────────────────────────────────────────
 
-        Dim btnLocal = btn
+    Private Sub LoadNonHeadResidents()
+        Try
+            If editingHouseholdId <= 0 Then Return
 
-        AddHandler btn.Resize, Sub(s, args)
-                                   Dim newPath As New GraphicsPath()
-                                   newPath.AddArc(0, 0, radius, radius, 180, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, 0, radius, radius, 270, 90)
-                                   newPath.AddArc(btnLocal.Width - radius, btnLocal.Height - radius, radius, radius, 0, 90)
-                                   newPath.AddArc(0, btnLocal.Height - radius, radius, radius, 90, 90)
-                                   newPath.CloseFigure()
-                                   btnLocal.Region = New Region(newPath)
-                               End Sub
+            ' ✅ Use the instance variable "householdEditLogic", NOT the class name
+            ResidentInHouseholdDGV.DataSource = householdEditLogic.GetNonHeadResidentsByHousehold(
+                editingHouseholdId,
+                TxtSearchResidents.Text.Trim()
+            )
+
+            FormatResidentGridColumns(ResidentInHouseholdDGV)
+
+        Catch ex As Exception
+            MsgBox("Error loading residents: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Debug.WriteLine("LoadNonHeadResidents Error: " & ex.Message)
+        End Try
     End Sub
 
-    ''' <summary>
-    ''' Edit Household button click
-    ''' </summary>
+    ' ─── DataGridView Configuration ──────────────────────────────────────────────
+
+    Private Sub ConfigureResidentGrid(dgv As DataGridView)
+        dgv.AutoGenerateColumns = True
+        dgv.AllowUserToAddRows = False
+        dgv.AllowUserToDeleteRows = False
+        dgv.AllowUserToResizeRows = False
+        dgv.RowHeadersVisible = False
+        dgv.ReadOnly = False
+        dgv.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2
+        dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgv.MultiSelect = False
+        dgv.EnableHeadersVisualStyles = False
+        dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+
+        dgv.BackgroundColor = Color.FromArgb(220, 220, 220)
+        dgv.GridColor = Color.FromArgb(180, 180, 180)
+
+        dgv.ColumnHeadersHeight = 35
+        dgv.RowTemplate.Height = 30
+
+        dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(60, 137, 66)
+        dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        dgv.ColumnHeadersDefaultCellStyle.Font = New Font("Arial", 10, FontStyle.Bold)
+        dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
+        dgv.DefaultCellStyle.Font = New Font("Arial", 10, FontStyle.Regular)
+        dgv.DefaultCellStyle.ForeColor = Color.Black
+        dgv.DefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240)
+        dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(100, 200, 120)
+        dgv.DefaultCellStyle.SelectionForeColor = Color.Black
+        dgv.DefaultCellStyle.Padding = New Padding(4)
+
+        dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(225, 225, 225)
+        dgv.AlternatingRowsDefaultCellStyle.ForeColor = Color.Black
+    End Sub
+
+    Private Sub FormatResidentGridColumns(dgv As DataGridView)
+        If dgv.Columns.Contains("ResidentId") Then
+            dgv.Columns("ResidentId").Visible = False
+        End If
+
+        SetColumnHeader(dgv, "FullName", "Full Name", 180)
+        SetColumnHeader(dgv, "FirstName", "First Name", 120)
+        SetColumnHeader(dgv, "MiddleName", "Middle Name", 120)
+        SetColumnHeader(dgv, "LastName", "Last Name", 120)
+        SetColumnHeader(dgv, "Sex", "Sex", 70)
+        SetColumnHeader(dgv, "CivilStatus", "Civil Status", 100)
+        SetColumnHeader(dgv, "ContactNumber", "Contact Number", 130)
+        SetColumnHeader(dgv, "HouseholdNumber", "Household Number", 140)
+    End Sub
+
+    Private Sub SetColumnHeader(dgv As DataGridView, columnName As String,
+                                headerText As String, width As Integer)
+        If dgv.Columns.Contains(columnName) Then
+            dgv.Columns(columnName).HeaderText = headerText
+            dgv.Columns(columnName).Width = width
+        End If
+    End Sub
+
+    ' ─── Search event handlers ────────────────────────────────────────────────────
+
+    Private Sub btnSearchHeads_Click(sender As Object, e As EventArgs) Handles btnSearchHeads.Click
+        LoadFamilyHeads()
+    End Sub
+
+    Private Sub BtnSearchResident_Click(sender As Object, e As EventArgs) Handles BtnSearchResident.Click
+        LoadNonHeadResidents()
+    End Sub
+
+    Private Sub txtSearchFamilyHeads_KeyDown(sender As Object, e As KeyEventArgs) Handles txtSearchFamilyHeads.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+            LoadFamilyHeads()
+        End If
+    End Sub
+
+    Private Sub TxtSearchResidents_KeyDown(sender As Object, e As KeyEventArgs) Handles TxtSearchResidents.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+            LoadNonHeadResidents()
+        End If
+    End Sub
+
+    ' ─── Save (Edit Household) ────────────────────────────────────────────────────
+
     Private Sub BtnEditHousehold_Click(sender As Object, e As EventArgs) Handles BtnEditHousehold.Click
         Try
-            ' === GET FORM DATA ===
-            Dim updatedData As New HouseholdEditLogic.HouseholdAddressData With {
+            If householdData Is Nothing OrElse householdData.AddressID <= 0 Then
+                MsgBox("No valid household address was loaded.", MsgBoxStyle.Exclamation, "Error")
+                Return
+            End If
+
+            FamilyHeadsDGV.EndEdit()
+            ResidentInHouseholdDGV.EndEdit()
+
+            ' ✅ Type qualifier uses the CLASS name "HouseholdEditLogic" (no underscore)
+            Dim updatedData As New HouseholdEdit_Logic.HouseholdAddressData With {
                 .HouseholdID = editingHouseholdId,
                 .HouseholdNumber = txtHouseholdNumber.Text.Trim(),
                 .AddressID = householdData.AddressID,
@@ -147,17 +238,13 @@ Public Class HouseholdEdit_Form
                 .Province = txtProvince.Text.Trim()
             }
 
-            ' === CALL SERVICE ===
-            Dim result As HouseholdEditLogic.HouseholdEditResult = householdEditLogic.UpdateHousehold(updatedData)
+            ' ✅ Call through the INSTANCE variable; result type uses the CLASS name
+            Dim result As HouseholdEdit_Logic.HouseholdEditResult =
+    householdEditLogic.UpdateAddress(updatedData)
 
             If result.IsSuccess Then
                 MsgBox(result.Message, MsgBoxStyle.Information, "Success")
-
-                ' === NAVIGATE BACK TO HOUSEHOLD MAIN ===
-                If Dashboard_Layout.CurrentInstance IsNot Nothing Then
-                    Dim householdMainForm As New HouseholdMain_Form()
-                    Dashboard_Layout.CurrentInstance.LoadContentPanel(householdMainForm)
-                End If
+                NavigateBackToHouseholdMain()
             Else
                 MsgBox(result.Message, MsgBoxStyle.Exclamation, "Error")
             End If
@@ -168,41 +255,83 @@ Public Class HouseholdEdit_Form
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Back to Main button click
-    ''' </summary>
+    ' ─── Navigation ──────────────────────────────────────────────────────────────
+
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        NavigateBackToHouseholdMain()
+    End Sub
+
+    Private Sub NavigateBackToHouseholdMain()
         Try
             If Dashboard_Layout.CurrentInstance IsNot Nothing Then
                 Dim householdMainForm As New HouseholdMain_Form()
                 Dashboard_Layout.CurrentInstance.LoadContentPanel(householdMainForm)
             End If
         Catch ex As Exception
-            MsgBox("Error: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            MsgBox("Error loading household main form: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Debug.WriteLine("NavigateBackToHouseholdMain Error: " & ex.Message)
         End Try
     End Sub
 
-    ''' <summary>
-    ''' Cleanup when form closes
-    ''' </summary>
-    Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
-        If responsiveManager IsNot Nothing Then
-            responsiveManager.Cleanup()
-        End If
-        MyBase.OnFormClosing(e)
+    ' ─── Visual Helpers ──────────────────────────────────────────────────────────
+
+    Private Sub ApplyGradient(pnl As Control, startColorHex As String, endColorHex As String)
+        Try
+            Dim startColor = ColorTranslator.FromHtml(startColorHex)
+            Dim endColor = ColorTranslator.FromHtml(endColorHex)
+
+            AddHandler pnl.Paint,
+                Sub(s, ev)
+                    Using brush As New LinearGradientBrush(
+                        New Point(0, 0), New Point(pnl.Width, 0), startColor, endColor)
+                        ev.Graphics.FillRectangle(brush, pnl.ClientRectangle)
+                    End Using
+                End Sub
+
+        Catch ex As Exception
+            Debug.WriteLine("ApplyGradient Error: " & ex.Message)
+        End Try
     End Sub
 
-    ' ========================================
-    ' TODO: For Future Implementation
-    ' ========================================
-    ' 1. btnSearchHeads_Click - Search family heads in household
-    ' 2. BtnSearchResident_Click - Search residents in household
-    ' 3. LoadFamilyHeads() - Load all family heads from GetFamilyHeadsByHousehold
-    ' 4. LoadResidents() - Load all residents from GetResidentsByHousehold
-    ' 5. ConfigureFamilyHeadsDGV() - Setup DataGridView styling for family heads
-    ' 6. ConfigureResidentsDGV() - Setup DataGridView styling for residents
-    ' 7. Handle button columns in DataGridView for family heads actions
-    ' 8. Handle button columns in DataGridView for residents actions
-    ' ========================================
+    Private Sub RoundButtonCorners(btn As Button, radius As Integer)
+        Try
+            If btn Is Nothing Then Return
+            ApplyButtonRoundedRegion(btn, radius)
+            AddHandler btn.Resize, Sub(s, ev) ApplyButtonRoundedRegion(btn, radius)
+        Catch ex As Exception
+            Debug.WriteLine("RoundButtonCorners Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub ApplyButtonRoundedRegion(btn As Button, radius As Integer)
+        Try
+            If btn Is Nothing OrElse btn.Width <= 0 OrElse btn.Height <= 0 Then Return
+
+            Dim safeRadius As Integer = Math.Min(radius, Math.Min(btn.Width, btn.Height))
+
+            Using p As New GraphicsPath()
+                p.AddArc(0, 0, safeRadius, safeRadius, 180, 90)
+                p.AddArc(btn.Width - safeRadius, 0, safeRadius, safeRadius, 270, 90)
+                p.AddArc(btn.Width - safeRadius, btn.Height - safeRadius, safeRadius, safeRadius, 0, 90)
+                p.AddArc(0, btn.Height - safeRadius, safeRadius, safeRadius, 90, 90)
+                p.CloseFigure()
+                btn.Region = New Region(p)
+            End Using
+
+        Catch ex As Exception
+            Debug.WriteLine("ApplyButtonRoundedRegion Error: " & ex.Message)
+        End Try
+    End Sub
+
+    ' ─── Cleanup ─────────────────────────────────────────────────────────────────
+
+    Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
+        Try
+            If responsiveManager IsNot Nothing Then responsiveManager.Cleanup()
+        Catch ex As Exception
+            Debug.WriteLine("OnFormClosing Cleanup Error: " & ex.Message)
+        End Try
+        MyBase.OnFormClosing(e)
+    End Sub
 
 End Class

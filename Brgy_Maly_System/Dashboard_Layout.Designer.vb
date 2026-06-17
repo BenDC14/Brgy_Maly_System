@@ -24,6 +24,13 @@
         Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Dashboard_Layout))
         Me.MenuPanel = New System.Windows.Forms.Panel()
+        Me.LeftPanel = New System.Windows.Forms.Panel()
+        Me.LogoTextPanel = New System.Windows.Forms.Panel()
+        Me.BrgyMalySystemLbl = New System.Windows.Forms.Label()
+        Me.TopPanel = New System.Windows.Forms.Panel()
+        Me.CenterPanel = New System.Windows.Forms.Panel()
+        Me.btnNewRelationshipType = New System.Windows.Forms.Button()
+        Me.btnNewCategoryAdding = New System.Windows.Forms.Button()
         Me.btnHouseholdAdding = New System.Windows.Forms.Button()
         Me.btnAyudaAdding = New System.Windows.Forms.Button()
         Me.BtnLogOut = New System.Windows.Forms.Button()
@@ -36,22 +43,19 @@
         Me.BtnEditBarangayInfo = New System.Windows.Forms.Button()
         Me.BtnAudit = New System.Windows.Forms.Button()
         Me.ResidentBtn = New System.Windows.Forms.Button()
-        Me.LeftPanel = New System.Windows.Forms.Panel()
-        Me.LogoTextPanel = New System.Windows.Forms.Panel()
         Me.LogoPic = New System.Windows.Forms.PictureBox()
-        Me.BrgyMalySystemLbl = New System.Windows.Forms.Label()
-        Me.TopPanel = New System.Windows.Forms.Panel()
         Me.UserAccountBtn = New System.Windows.Forms.Button()
-        Me.CenterPanel = New System.Windows.Forms.Panel()
         Me.MenuPanel.SuspendLayout()
         Me.LeftPanel.SuspendLayout()
         Me.LogoTextPanel.SuspendLayout()
-        CType(Me.LogoPic, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TopPanel.SuspendLayout()
+        CType(Me.LogoPic, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'MenuPanel
         '
+        Me.MenuPanel.Controls.Add(Me.btnNewRelationshipType)
+        Me.MenuPanel.Controls.Add(Me.btnNewCategoryAdding)
         Me.MenuPanel.Controls.Add(Me.btnHouseholdAdding)
         Me.MenuPanel.Controls.Add(Me.btnAyudaAdding)
         Me.MenuPanel.Controls.Add(Me.BtnLogOut)
@@ -70,6 +74,94 @@
         Me.MenuPanel.Name = "MenuPanel"
         Me.MenuPanel.Size = New System.Drawing.Size(255, 985)
         Me.MenuPanel.TabIndex = 0
+        '
+        'LeftPanel
+        '
+        Me.LeftPanel.BackColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(66, Byte), Integer))
+        Me.LeftPanel.Controls.Add(Me.MenuPanel)
+        Me.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left
+        Me.LeftPanel.Location = New System.Drawing.Point(0, 76)
+        Me.LeftPanel.Name = "LeftPanel"
+        Me.LeftPanel.Size = New System.Drawing.Size(255, 985)
+        Me.LeftPanel.TabIndex = 1
+        '
+        'LogoTextPanel
+        '
+        Me.LogoTextPanel.BackColor = System.Drawing.Color.Transparent
+        Me.LogoTextPanel.Controls.Add(Me.LogoPic)
+        Me.LogoTextPanel.Controls.Add(Me.BrgyMalySystemLbl)
+        Me.LogoTextPanel.Dock = System.Windows.Forms.DockStyle.Left
+        Me.LogoTextPanel.Location = New System.Drawing.Point(0, 0)
+        Me.LogoTextPanel.Name = "LogoTextPanel"
+        Me.LogoTextPanel.Size = New System.Drawing.Size(300, 76)
+        Me.LogoTextPanel.TabIndex = 6
+        '
+        'BrgyMalySystemLbl
+        '
+        Me.BrgyMalySystemLbl.AutoSize = True
+        Me.BrgyMalySystemLbl.BackColor = System.Drawing.Color.Transparent
+        Me.BrgyMalySystemLbl.Font = New System.Drawing.Font("Arial Narrow", 20.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.BrgyMalySystemLbl.Location = New System.Drawing.Point(98, 9)
+        Me.BrgyMalySystemLbl.Name = "BrgyMalySystemLbl"
+        Me.BrgyMalySystemLbl.Padding = New System.Windows.Forms.Padding(10)
+        Me.BrgyMalySystemLbl.Size = New System.Drawing.Size(195, 51)
+        Me.BrgyMalySystemLbl.TabIndex = 4
+        Me.BrgyMalySystemLbl.Text = "Barangay Maly "
+        '
+        'TopPanel
+        '
+        Me.TopPanel.BackColor = System.Drawing.Color.Transparent
+        Me.TopPanel.Controls.Add(Me.LogoTextPanel)
+        Me.TopPanel.Controls.Add(Me.UserAccountBtn)
+        Me.TopPanel.Dock = System.Windows.Forms.DockStyle.Top
+        Me.TopPanel.Location = New System.Drawing.Point(0, 0)
+        Me.TopPanel.Name = "TopPanel"
+        Me.TopPanel.Size = New System.Drawing.Size(1920, 76)
+        Me.TopPanel.TabIndex = 0
+        '
+        'CenterPanel
+        '
+        Me.CenterPanel.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.CenterPanel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.CenterPanel.Location = New System.Drawing.Point(255, 76)
+        Me.CenterPanel.Name = "CenterPanel"
+        Me.CenterPanel.Size = New System.Drawing.Size(1665, 985)
+        Me.CenterPanel.TabIndex = 2
+        '
+        'btnNewRelationshipType
+        '
+        Me.btnNewRelationshipType.BackColor = System.Drawing.Color.Transparent
+        Me.btnNewRelationshipType.FlatAppearance.BorderSize = 0
+        Me.btnNewRelationshipType.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNewRelationshipType.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnNewRelationshipType.ForeColor = System.Drawing.Color.White
+        Me.btnNewRelationshipType.Image = Global.Brgy_Maly_System.My.Resources.Resources.family_relationship
+        Me.btnNewRelationshipType.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.btnNewRelationshipType.Location = New System.Drawing.Point(12, 643)
+        Me.btnNewRelationshipType.Name = "btnNewRelationshipType"
+        Me.btnNewRelationshipType.Padding = New System.Windows.Forms.Padding(10)
+        Me.btnNewRelationshipType.Size = New System.Drawing.Size(243, 51)
+        Me.btnNewRelationshipType.TabIndex = 14
+        Me.btnNewRelationshipType.Text = "Relationship Adding"
+        Me.btnNewRelationshipType.UseVisualStyleBackColor = False
+        '
+        'btnNewCategoryAdding
+        '
+        Me.btnNewCategoryAdding.BackColor = System.Drawing.Color.Transparent
+        Me.btnNewCategoryAdding.FlatAppearance.BorderSize = 0
+        Me.btnNewCategoryAdding.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNewCategoryAdding.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnNewCategoryAdding.ForeColor = System.Drawing.Color.White
+        Me.btnNewCategoryAdding.Image = Global.Brgy_Maly_System.My.Resources.Resources.demographic
+        Me.btnNewCategoryAdding.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.btnNewCategoryAdding.Location = New System.Drawing.Point(19, 700)
+        Me.btnNewCategoryAdding.Name = "btnNewCategoryAdding"
+        Me.btnNewCategoryAdding.Padding = New System.Windows.Forms.Padding(10)
+        Me.btnNewCategoryAdding.Size = New System.Drawing.Size(206, 51)
+        Me.btnNewCategoryAdding.TabIndex = 13
+        Me.btnNewCategoryAdding.Text = "Category Adding"
+        Me.btnNewCategoryAdding.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btnNewCategoryAdding.UseVisualStyleBackColor = False
         '
         'btnHouseholdAdding
         '
@@ -281,27 +373,6 @@
         Me.ResidentBtn.Text = "Residents"
         Me.ResidentBtn.UseVisualStyleBackColor = False
         '
-        'LeftPanel
-        '
-        Me.LeftPanel.BackColor = System.Drawing.Color.FromArgb(CType(CType(60, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(66, Byte), Integer))
-        Me.LeftPanel.Controls.Add(Me.MenuPanel)
-        Me.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left
-        Me.LeftPanel.Location = New System.Drawing.Point(0, 76)
-        Me.LeftPanel.Name = "LeftPanel"
-        Me.LeftPanel.Size = New System.Drawing.Size(255, 985)
-        Me.LeftPanel.TabIndex = 1
-        '
-        'LogoTextPanel
-        '
-        Me.LogoTextPanel.BackColor = System.Drawing.Color.Transparent
-        Me.LogoTextPanel.Controls.Add(Me.LogoPic)
-        Me.LogoTextPanel.Controls.Add(Me.BrgyMalySystemLbl)
-        Me.LogoTextPanel.Dock = System.Windows.Forms.DockStyle.Left
-        Me.LogoTextPanel.Location = New System.Drawing.Point(0, 0)
-        Me.LogoTextPanel.Name = "LogoTextPanel"
-        Me.LogoTextPanel.Size = New System.Drawing.Size(300, 76)
-        Me.LogoTextPanel.TabIndex = 6
-        '
         'LogoPic
         '
         Me.LogoPic.Image = Global.Brgy_Maly_System.My.Resources.Resources.LogoForMaly
@@ -311,29 +382,6 @@
         Me.LogoPic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.LogoPic.TabIndex = 3
         Me.LogoPic.TabStop = False
-        '
-        'BrgyMalySystemLbl
-        '
-        Me.BrgyMalySystemLbl.AutoSize = True
-        Me.BrgyMalySystemLbl.BackColor = System.Drawing.Color.Transparent
-        Me.BrgyMalySystemLbl.Font = New System.Drawing.Font("Arial Narrow", 20.25!, CType((System.Drawing.FontStyle.Bold Or System.Drawing.FontStyle.Italic), System.Drawing.FontStyle), System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BrgyMalySystemLbl.Location = New System.Drawing.Point(98, 9)
-        Me.BrgyMalySystemLbl.Name = "BrgyMalySystemLbl"
-        Me.BrgyMalySystemLbl.Padding = New System.Windows.Forms.Padding(10)
-        Me.BrgyMalySystemLbl.Size = New System.Drawing.Size(195, 51)
-        Me.BrgyMalySystemLbl.TabIndex = 4
-        Me.BrgyMalySystemLbl.Text = "Barangay Maly "
-        '
-        'TopPanel
-        '
-        Me.TopPanel.BackColor = System.Drawing.Color.Transparent
-        Me.TopPanel.Controls.Add(Me.LogoTextPanel)
-        Me.TopPanel.Controls.Add(Me.UserAccountBtn)
-        Me.TopPanel.Dock = System.Windows.Forms.DockStyle.Top
-        Me.TopPanel.Location = New System.Drawing.Point(0, 0)
-        Me.TopPanel.Name = "TopPanel"
-        Me.TopPanel.Size = New System.Drawing.Size(1920, 76)
-        Me.TopPanel.TabIndex = 0
         '
         'UserAccountBtn
         '
@@ -351,15 +399,6 @@
         Me.UserAccountBtn.TabIndex = 10
         Me.UserAccountBtn.Text = "Username"
         Me.UserAccountBtn.UseVisualStyleBackColor = False
-        '
-        'CenterPanel
-        '
-        Me.CenterPanel.BackColor = System.Drawing.Color.WhiteSmoke
-        Me.CenterPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.CenterPanel.Location = New System.Drawing.Point(255, 76)
-        Me.CenterPanel.Name = "CenterPanel"
-        Me.CenterPanel.Size = New System.Drawing.Size(1665, 985)
-        Me.CenterPanel.TabIndex = 2
         '
         'Dashboard_Layout
         '
@@ -379,8 +418,8 @@
         Me.LeftPanel.ResumeLayout(False)
         Me.LogoTextPanel.ResumeLayout(False)
         Me.LogoTextPanel.PerformLayout()
-        CType(Me.LogoPic, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TopPanel.ResumeLayout(False)
+        CType(Me.LogoPic, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -405,4 +444,6 @@
         Friend WithEvents CenterPanel As Panel
     Public WithEvents btnAyudaAdding As Button
     Public WithEvents btnHouseholdAdding As Button
+    Public WithEvents btnNewRelationshipType As Button
+    Public WithEvents btnNewCategoryAdding As Button
 End Class

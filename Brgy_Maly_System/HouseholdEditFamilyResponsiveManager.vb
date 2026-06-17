@@ -1,303 +1,292 @@
-﻿Imports System.Drawing.Drawing2D
+﻿' ================================================================================
+' FILE: HouseholdEditFamilyResponsiveManager.vb
+' LAYER: Universal Responsive Scaling Layer
+' PURPOSE: Translates the Designer's fixed 1700×1004 pixel layout into
+'          percentage-based coordinates so every control scales smoothly
+'          from 1366×768 upward to any higher resolution.
+'
+' Layout zones (Y% of total height):
+'   Title              0 – 30 %
+'   Members DGV       30 – 72 %
+'   Add Members       72 – 92 %
+'   Action buttons    92 – 100 %
+' ================================================================================
 Imports Microsoft.Win32
 
 ''' <summary>
-''' Responsive UI Manager specifically for HouseholdEditFamily_Form
-''' Handles all layout calculations, positioning, and font scaling
-''' Three-row layout: Top (Family Info) | Middle (Members DataGridView) | Bottom (Add New Members + Action Buttons)
+''' Responsive UI manager for HouseholdEditFamily_Form.
+''' Recalculates all control positions and font sizes whenever the host window
+''' or system display settings change.
 ''' </summary>
 Public Class HouseholdEditFamilyResponsiveManager
-    ' === Store original dimensions from Designer ===
+
+    ' ── Designer baseline ────────────────────────────────────────────────────────
     Private Const ORIGINAL_WIDTH As Integer = 1700
     Private Const ORIGINAL_HEIGHT As Integer = 1004
 
-    ' === Reference to the form ===
+    ' ── Floor dimensions (1366×768 viewport minimum) ─────────────────────────────
+    Private Const MIN_WIDTH As Integer = 640
+    Private Const MIN_HEIGHT As Integer = 400
+
+    ' ── Form reference ───────────────────────────────────────────────────────────
     Private ReadOnly _form As HouseholdEditFamily_Form
 
-    ' === Timer for debouncing ===
-    Private resizeTimer As New System.Windows.Forms.Timer()
-    Private isLayoutCalculated As Boolean = False
+    ' ── Debounce timer ───────────────────────────────────────────────────────────
+    Private ReadOnly _resizeTimer As New System.Windows.Forms.Timer With {.Interval = 280}
+    Private _layoutDone As Boolean = False
 
-    ''' <summary>
-    ''' Constructor - Initialize with form reference
-    ''' </summary>
+    ' ============================================================================
+    ' CONSTRUCTOR
+    ' ============================================================================
     Public Sub New(form As HouseholdEditFamily_Form)
         _form = form
     End Sub
 
-    ''' <summary>
-    ''' Initialize responsive behavior
-    ''' </summary>
+    ' ============================================================================
+    ' INITIALIZE
+    ' ============================================================================
     Public Sub Initialize()
-        ' === CRITICAL: Override Designer's fixed size on FillPanel ===
-        _form.FillPanel.Size = New Size(_form.ClientSize.Width, _form.ClientSize.Height)
-        _form.FillPanel.Location = New Point(0, 0)
-
-        ' === MAIN CONTAINER - FILL AVAILABLE SPACE ===
         _form.FillPanel.Dock = DockStyle.Fill
-        _form.FillPanel.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        _form.FillPanel.Location = New Point(0, 0)
+        _form.FillPanel.Size = New Size(_form.ClientSize.Width, _form.ClientSize.Height)
 
-        ' === Setup timer to debounce resize events ===
-        resizeTimer.Interval = 300
-        AddHandler resizeTimer.Tick, AddressOf ResizeTimer_Tick
-
-        ' === Add resize event to recalculate layout when window resizes ===
+        AddHandler _resizeTimer.Tick, AddressOf ResizeTimer_Tick
         AddHandler _form.Resize, AddressOf Form_Resize
+        AddHandler SystemEvents.DisplaySettingsChanged, AddressOf SystemDisplay_Changed
 
-        ' === CRITICAL: Listen for system resolution changes ===
-        AddHandler SystemEvents.DisplaySettingsChanged, AddressOf SystemDisplayChanged
-
-        ' === Calculate and apply layout for the first time ===
         _form.FillPanel.PerformLayout()
         Application.DoEvents()
         CalculateAndApplyLayout()
-        isLayoutCalculated = True
+        _layoutDone = True
     End Sub
 
-    ''' <summary>
-    ''' CRITICAL: Fires when Windows resolution changes
-    ''' </summary>
-    Private Sub SystemDisplayChanged(sender As Object, e As EventArgs)
-        CalculateAndApplyLayout()
-    End Sub
+    ' ============================================================================
+    ' EVENT HANDLERS
+    ' ============================================================================
 
-    ''' <summary>
-    ''' Fires when form window resizes
-    ''' </summary>
     Private Sub Form_Resize(sender As Object, e As EventArgs)
-        If Not isLayoutCalculated Then Exit Sub
-        resizeTimer.Stop()
-        resizeTimer.Start()
+        If Not _layoutDone Then Return
+        _resizeTimer.Stop()
+        _resizeTimer.Start()
     End Sub
 
-    ''' <summary>
-    ''' Timer tick - recalculates layout ONCE after resize stops
-    ''' </summary>
     Private Sub ResizeTimer_Tick(sender As Object, e As EventArgs)
-        resizeTimer.Stop()
+        _resizeTimer.Stop()
         CalculateAndApplyLayout()
     End Sub
 
+    Private Sub SystemDisplay_Changed(sender As Object, e As EventArgs)
+        CalculateAndApplyLayout()
+    End Sub
+
+    ' ============================================================================
+    ' MASTER LAYOUT ORCHESTRATOR
+    ' ============================================================================
+
     ''' <summary>
-    ''' Calculate positions and apply layout based on current form size
+    ''' Recalculates all control positions relative to the form's current client
+    ''' area.  Called on load, resize, and display-setting changes.
     ''' </summary>
     Public Sub CalculateAndApplyLayout()
-        ' === Use form's actual client size ===
-        Dim panelWidth As Integer = _form.ClientSize.Width
-        Dim panelHeight As Integer = _form.ClientSize.Height
+        Dim w As Integer = Math.Max(_form.ClientSize.Width, MIN_WIDTH)
+        Dim h As Integer = Math.Max(_form.ClientSize.Height, MIN_HEIGHT)
+        If w < 100 OrElse h < 100 Then Return
 
-        If panelWidth < 100 Or panelHeight < 100 Then Exit Sub
+        Dim wScale As Single = CSng(w) / ORIGINAL_WIDTH
+        Dim hScale As Single = CSng(h) / ORIGINAL_HEIGHT
+        Dim scale As Single = Math.Min(wScale, hScale)
 
-        ' === Calculate scale factor for font sizing ===
-        Dim widthScale As Single = CSng(panelWidth) / ORIGINAL_WIDTH
-        Dim heightScale As Single = CSng(panelHeight) / ORIGINAL_HEIGHT
-        Dim scaleFactor As Single = Math.Min(widthScale, heightScale)
-
-        ' === Update FillPanel ===
-        _form.FillPanel.Size = New Size(panelWidth, panelHeight)
+        _form.FillPanel.Size = New Size(w, h)
         _form.FillPanel.Location = New Point(0, 0)
 
-        ' === POSITION ALL SECTIONS ===
-        PositionTitleSection(panelWidth, panelHeight, scaleFactor)
-        PositionFamilyInfoSection(panelWidth, panelHeight, scaleFactor)
-        PositionFirstDividerLine(panelWidth, panelHeight)
-        PositionMembersSection(panelWidth, panelHeight, scaleFactor)
-        PositionSecondDividerLine(panelWidth, panelHeight)
-        PositionAddNewMembersSection(panelWidth, panelHeight, scaleFactor)
-        PositionActionButtons(panelWidth, panelHeight, scaleFactor)
+        PositionTitleSection(w, h, scale)
+        PositionFamilyInfoSection(w, h, scale)
+        PositionFirstDivider(w, h)
+        PositionMembersSection(w, h, scale)
+        PositionSecondDivider(w, h)
+        PositionAddMembersSection(w, h, scale)
+        PositionActionButtons(w, h, scale)
     End Sub
 
-    ''' <summary>
-    ''' Position title section
-    ''' </summary>
-    Private Sub PositionTitleSection(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        ' EditFamilylbl - Designer: Location(30, 30)
-        _form.EditFamilylbl.Location = New Point(CInt(panelWidth * 0.018), CInt(panelHeight * 0.03))
-        _form.EditFamilylbl.Font = New Font("Arial", 20.25F * scaleFactor, FontStyle.Bold)
+    ' ============================================================================
+    ' SECTION: Title
+    '   EditFamilylbl @ Designer (30, 30) → 1.76 % × 2.99 %
+    ' ============================================================================
+    Private Sub PositionTitleSection(w As Integer, h As Integer, scale As Single)
+        _form.EditFamilylbl.Location = New Point(CInt(w * 0.0176), CInt(h * 0.0299))
+        _form.EditFamilylbl.Font = New Font("Arial", Math.Max(9, 20.25F * scale), FontStyle.Bold)
         _form.EditFamilylbl.Anchor = AnchorStyles.Top Or AnchorStyles.Left
     End Sub
 
-    ''' <summary>
-    ''' Position Family Information fields (Family ID, Family Name, Household, Family Head, Total Members)
-    ''' </summary>
-    Private Sub PositionFamilyInfoSection(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        Dim margin1 As Integer = CInt(panelWidth * 0.241)
-        Dim margin2 As Integer = CInt(panelWidth * 0.095)
-        Dim margin3 As Integer = CInt(panelWidth * 0.385)
-        Dim margin4 As Integer = CInt(panelWidth * 0.385)
-        Dim fieldWidth As Integer = CInt(panelWidth * 0.226)
-        Dim labelFontSize As Single = 12.0F * scaleFactor
-        Dim fieldFontSize As Single = 12.0F * scaleFactor
+    ' ============================================================================
+    ' SECTION: Family Info (IDs, names, household, head, total members)
+    '   Row 1 (y≈11.8 %): FamilyID @ 23.8 %,  Household @ 54.9 %
+    '   Row 2 (y≈19.0 %): FamilyName @ 9.2 %, FamilyHead @ 38.3 %, TotalMembers @ 67.5 %
+    '   Field width: 384 px → 22.6 %
+    ' ============================================================================
+    Private Sub PositionFamilyInfoSection(w As Integer, h As Integer, scale As Single)
+        Dim lbFont As Single = Math.Max(7, 12.0F * scale)
+        Dim txFont As Single = Math.Max(7, 12.0F * scale)
+        Dim fldH As Integer = CInt(h * 0.026)
+        Dim fldW As Integer = CInt(w * 0.226)
 
-        ' === FAMILY ID ===
-        _form.FamilyIDlbl.Location = New Point(margin2, CInt(panelHeight * 0.118))
-        _form.FamilyIDlbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-        _form.txtFamilyID.Location = New Point(margin2, CInt(panelHeight * 0.141))
-        _form.txtFamilyID.Size = New Size(fieldWidth, CInt(panelHeight * 0.026))
-        _form.txtFamilyID.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
+        ' Row 1 — labels
+        Dim lbY1 As Integer = CInt(h * 0.118)
+        SetLabel(_form.FamilyIDlbl, CInt(w * 0.238), lbY1, lbFont)
+        SetLabel(_form.Householdlbl, CInt(w * 0.549), lbY1, lbFont)
 
-        ' === FAMILY NAME ===
-        _form.FamilyNamelbl.Location = New Point(margin2, CInt(panelHeight * 0.19))
-        _form.FamilyNamelbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-        _form.txtFamilyName.Location = New Point(margin2, CInt(panelHeight * 0.213))
-        _form.txtFamilyName.Size = New Size(fieldWidth, CInt(panelHeight * 0.026))
-        _form.txtFamilyName.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
+        ' Row 1 — textboxes
+        Dim txY1 As Integer = CInt(h * 0.141)
+        SetTextBox(_form.txtFamilyID, CInt(w * 0.238), txY1, fldW, fldH, txFont)
+        SetTextBox(_form.txtHousehold, CInt(w * 0.549), txY1, fldW, fldH, txFont)
 
-        ' === HOUSEHOLD ===
-        _form.Householdlbl.Location = New Point(margin3, CInt(panelHeight * 0.118))
-        _form.Householdlbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-        _form.txtHousehold.Location = New Point(margin3, CInt(panelHeight * 0.141))
-        _form.txtHousehold.Size = New Size(fieldWidth, CInt(panelHeight * 0.026))
-        _form.txtHousehold.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
+        ' Row 2 — labels
+        Dim lbY2 As Integer = CInt(h * 0.19)
+        SetLabel(_form.FamilyNamelbl, CInt(w * 0.092), lbY2, lbFont)
+        SetLabel(_form.FamilyHeadlbl, CInt(w * 0.383), lbY2, lbFont)
+        SetLabel(_form.TotalFamilyMemberslbl, CInt(w * 0.675), lbY2, lbFont)
 
-        ' === FAMILY HEAD ===
-        _form.FamilyHeadlbl.Location = New Point(margin4, CInt(panelHeight * 0.19))
-        _form.FamilyHeadlbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-        _form.txtFamilyHead.Location = New Point(margin4, CInt(panelHeight * 0.213))
-        _form.txtFamilyHead.Size = New Size(fieldWidth, CInt(panelHeight * 0.026))
-        _form.txtFamilyHead.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
-
-        ' === TOTAL FAMILY MEMBERS ===
-        _form.TotalFamilyMemberslbl.Location = New Point(CInt(panelWidth * 0.675), CInt(panelHeight * 0.19))
-        _form.TotalFamilyMemberslbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-        _form.txtTotalFamilyMembers.Location = New Point(CInt(panelWidth * 0.675), CInt(panelHeight * 0.213))
-        _form.txtTotalFamilyMembers.Size = New Size(fieldWidth, CInt(panelHeight * 0.026))
-        _form.txtTotalFamilyMembers.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
+        ' Row 2 — textboxes
+        Dim txY2 As Integer = CInt(h * 0.213)
+        SetTextBox(_form.txtFamilyName, CInt(w * 0.092), txY2, fldW, fldH, txFont)
+        SetTextBox(_form.txtFamilyHead, CInt(w * 0.383), txY2, fldW, fldH, txFont)
+        SetTextBox(_form.txtTotalFamilyMembers, CInt(w * 0.675), txY2, fldW, fldH, txFont)
     End Sub
 
-    ''' <summary>
-    ''' Position first horizontal divider
-    ''' </summary>
-    Private Sub PositionFirstDividerLine(panelWidth As Integer, panelHeight As Integer)
-        ' LinePnl - Designer: Location(0, 302), Size(1700, 2)
-        _form.LinePnl.Location = New Point(0, CInt(panelHeight * 0.301))
-        _form.LinePnl.Size = New Size(panelWidth, 2)
+    ' ============================================================================
+    ' SECTION: First divider — LinePnl @ y=302 → 30.1 %
+    ' ============================================================================
+    Private Sub PositionFirstDivider(w As Integer, h As Integer)
+        _form.LinePnl.Location = New Point(0, CInt(h * 0.301))
+        _form.LinePnl.Size = New Size(w, 2)
         _form.LinePnl.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
     End Sub
 
-    ''' <summary>
-    ''' Position Members section (title, DataGridView, action buttons)
-    ''' </summary>
-    Private Sub PositionMembersSection(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        Dim leftMargin As Integer = CInt(panelWidth * 0.021)
-        Dim dataGridWidth As Integer = CInt(panelWidth * 0.96)
-        Dim buttonWidth As Integer = CInt(panelWidth * 0.08)
-        Dim buttonHeight As Integer = CInt(panelHeight * 0.044)
+    ' ============================================================================
+    ' SECTION: Members — title + DataGridView
+    '   Memberslbl        @ Designer (30, 329)  → 1.76 % × 32.8 %
+    '   FamilyMembersDGV  @ Designer (36, 374)  → 2.1  % × 37.3 %
+    '   DGV width: 1633 px → 96.1 %  |  height: 326 px → 32.5 %
+    ' ============================================================================
+    Private Sub PositionMembersSection(w As Integer, h As Integer, scale As Single)
+        Dim lm As Integer = CInt(w * 0.021)
 
-        ' === MEMBERS TITLE ===
-        _form.Memberslbl.Location = New Point(leftMargin, CInt(panelHeight * 0.329))
-        _form.Memberslbl.Font = New Font("Arial", 20.25F * scaleFactor, FontStyle.Bold)
+        _form.Memberslbl.Location = New Point(lm, CInt(h * 0.328))
+        _form.Memberslbl.Font = New Font("Arial", Math.Max(9, 20.25F * scale), FontStyle.Bold)
         _form.Memberslbl.Anchor = AnchorStyles.Top Or AnchorStyles.Left
 
-        ' === DATAGRIDVIEW ===
-        _form.FamilyMembersDGV.Location = New Point(leftMargin, CInt(panelHeight * 0.374))
-        _form.FamilyMembersDGV.Size = New Size(dataGridWidth, CInt(panelHeight * 0.325))
+        _form.FamilyMembersDGV.Location = New Point(lm, CInt(h * 0.373))
+        _form.FamilyMembersDGV.Size = New Size(CInt(w * 0.961), CInt(h * 0.325))
         _form.FamilyMembersDGV.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
 
-        ' === EDIT MEMBER BUTTON ===
-        _form.btnEditMember.Location = New Point(CInt(panelWidth * 0.804), CInt(panelHeight * 0.387))
-        _form.btnEditMember.Size = New Size(CInt(panelWidth * 0.08), buttonHeight)
-        _form.btnEditMember.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        _form.btnEditMember.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnEditMember.Cursor = Cursors.Hand
-
-        ' === EDIT POSITION BUTTON ===
-        _form.btnEditPosition.Location = New Point(CInt(panelWidth * 0.896), CInt(panelHeight * 0.387))
-        _form.btnEditPosition.Size = New Size(CInt(panelWidth * 0.08), buttonHeight)
-        _form.btnEditPosition.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        _form.btnEditPosition.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnEditPosition.Cursor = Cursors.Hand
+        _form.FamilyMembersDGV.ColumnHeadersHeight = Math.Max(24, CInt(35 * scale))
+        _form.FamilyMembersDGV.RowTemplate.Height = Math.Max(20, CInt(32 * scale))
+        _form.FamilyMembersDGV.DefaultCellStyle.Font =
+            New Font("Arial", Math.Max(7, 10.0F * scale), FontStyle.Regular)
+        _form.FamilyMembersDGV.ColumnHeadersDefaultCellStyle.Font =
+            New Font("Arial", Math.Max(7, 11.0F * scale), FontStyle.Bold)
     End Sub
 
-    ''' <summary>
-    ''' Position second horizontal divider
-    ''' </summary>
-    Private Sub PositionSecondDividerLine(panelWidth As Integer, panelHeight As Integer)
-        ' LinePnl2 - Designer: Location(0, 725), Size(1700, 2)
-        _form.LinePnl2.Location = New Point(0, CInt(panelHeight * 0.722))
-        _form.LinePnl2.Size = New Size(panelWidth, 2)
+    ' ============================================================================
+    ' SECTION: Second divider — LinePnl2 @ y=725 → 72.2 %
+    ' ============================================================================
+    Private Sub PositionSecondDivider(w As Integer, h As Integer)
+        _form.LinePnl2.Location = New Point(0, CInt(h * 0.722))
+        _form.LinePnl2.Size = New Size(w, 2)
         _form.LinePnl2.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
     End Sub
 
-    ''' <summary>
-    ''' Position Add New Members section (title, comboboxes, selects)
-    ''' </summary>
-    Private Sub PositionAddNewMembersSection(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        Dim leftMargin As Integer = CInt(panelWidth * 0.021)
-        Dim comboMargin1 As Integer = CInt(panelWidth * 0.095)
-        Dim comboMargin2 As Integer = CInt(panelWidth * 0.677)
-        Dim comboWidth As Integer = CInt(panelWidth * 0.241)
-        Dim labelFontSize As Single = 12.0F * scaleFactor
-        Dim fieldFontSize As Single = 14.25F * scaleFactor
+    ' ============================================================================
+    ' SECTION: Add New Members — title + two combobox pairs
+    '   AddNewMemberslbl    @ (32,  743) → 1.9  % × 74.0 %
+    '   SelectResidentslbl  @ (156, 787) → 9.2  % × 78.4 %
+    '   cbResidents         @ (160, 809) → 9.4  % × 80.6 %  w=24.1 %
+    '   RelationshipTypelbl @ (1147,787) → 67.5 % × 78.4 %
+    '   cbRelationships     @ (1151,809) → 67.7 % × 80.6 %  w=24.1 %
+    ' ============================================================================
+    Private Sub PositionAddMembersSection(w As Integer, h As Integer, scale As Single)
+        Dim lbFont As Single = Math.Max(7, 12.0F * scale)
+        Dim fieldFont As Single = Math.Max(7, 14.25F * scale)
+        Dim cbH As Integer = Math.Max(20, CInt(h * 0.032))
+        Dim cbW As Integer = CInt(w * 0.241)
+        Dim cbX1 As Integer = CInt(w * 0.094)
+        Dim cbX2 As Integer = CInt(w * 0.677)
 
-        ' === ADD NEW MEMBERS TITLE ===
-        _form.AddNewMemberslbl.Location = New Point(leftMargin, CInt(panelHeight * 0.743))
-        _form.AddNewMemberslbl.Font = New Font("Arial", 14.25F * scaleFactor, FontStyle.Bold)
+        _form.AddNewMemberslbl.Location = New Point(CInt(w * 0.019), CInt(h * 0.743))
+        _form.AddNewMemberslbl.Font = New Font("Arial", Math.Max(8, 14.25F * scale), FontStyle.Bold)
 
-        ' === SELECT RESIDENTS LABEL ===
-        _form.SelectResidentslbl.Location = New Point(comboMargin1, CInt(panelHeight * 0.785))
-        _form.SelectResidentslbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-
-        ' === SELECT RESIDENTS COMBOBOX ===
-        _form.cbResidents.Location = New Point(comboMargin1, CInt(panelHeight * 0.809))
-        _form.cbResidents.Size = New Size(comboWidth, CInt(panelHeight * 0.03))
-        _form.cbResidents.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
+        SetLabel(_form.SelectResidentslbl, cbX1, CInt(h * 0.785), lbFont)
+        SetComboBox(_form.cbResidents, cbX1, CInt(h * 0.809), cbW, cbH, fieldFont)
         _form.cbResidents.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
 
-        ' === RELATIONSHIP TYPE LABEL ===
-        _form.RelationshipTypelbl.Location = New Point(comboMargin2, CInt(panelHeight * 0.785))
-        _form.RelationshipTypelbl.Font = New Font("Arial", labelFontSize, FontStyle.Bold)
-
-        ' === RELATIONSHIP TYPE COMBOBOX ===
-        _form.cbRelationships.Location = New Point(comboMargin2, CInt(panelHeight * 0.809))
-        _form.cbRelationships.Size = New Size(comboWidth, CInt(panelHeight * 0.03))
-        _form.cbRelationships.Font = New Font("Arial", fieldFontSize, FontStyle.Regular)
-        _form.cbRelationships.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        SetLabel(_form.RelationshipTypelbl, cbX2, CInt(h * 0.785), lbFont)
+        SetComboBox(_form.cbRelationships, cbX2, CInt(h * 0.809), cbW, cbH, fieldFont)
+        _form.cbRelationships.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
     End Sub
 
-    ''' <summary>
-    ''' Position action buttons (Add New Member, Save Changes, Add New Resident, Back)
-    ''' </summary>
-    Private Sub PositionActionButtons(panelWidth As Integer, panelHeight As Integer, scaleFactor As Single)
-        Dim btnWidth As Integer = CInt(panelWidth * 0.117)
-        Dim btnHeight As Integer = CInt(panelHeight * 0.044)
-        Dim btnY As Integer = CInt(panelHeight * 0.917)
+    ' ============================================================================
+    ' SECTION: Action buttons  (four along the bottom row)
+    '   btnAddNewFamilyMember @ (160,  921) → 9.4  % × 91.7 %  w=11.7 %
+    '   btnSaveChanges        @ (582,  921) → 34.2 % × 91.7 %
+    '   btnAddNewResident     @ (980,  921) → 57.6 % × 91.7 %
+    '   btnBack               @ (1362, 921) → 80.1 % × 91.7 %
+    '   Button height: 44 px → 4.4 %
+    ' ============================================================================
+    Private Sub PositionActionButtons(w As Integer, h As Integer, scale As Single)
+        Dim btnW As Integer = CInt(w * 0.117)
+        Dim btnH As Integer = Math.Max(28, CInt(h * 0.044))
+        Dim btnY As Integer = CInt(h * 0.917)
+        Dim font As Single = Math.Max(7, 11.25F * scale)
 
-        ' Add New Member Button - Designer: Location(160, 921)
-        _form.btnAddNewFamilyMember.Location = New Point(CInt(panelWidth * 0.094), btnY)
-        _form.btnAddNewFamilyMember.Size = New Size(btnWidth, btnHeight)
-        _form.btnAddNewFamilyMember.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        _form.btnAddNewFamilyMember.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnAddNewFamilyMember.Cursor = Cursors.Hand
-
-        ' Save Changes Button - Designer: Location(582, 921)
-        _form.btnSaveChanges.Location = New Point(CInt(panelWidth * 0.342), btnY)
-        _form.btnSaveChanges.Size = New Size(btnWidth, btnHeight)
-        _form.btnSaveChanges.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        _form.btnSaveChanges.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnSaveChanges.Cursor = Cursors.Hand
-
-        ' Add New Resident Button - Designer: Location(980, 921)
-        _form.btnAddNewResident.Location = New Point(CInt(panelWidth * 0.576), btnY)
-        _form.btnAddNewResident.Size = New Size(btnWidth, btnHeight)
-        _form.btnAddNewResident.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        _form.btnAddNewResident.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnAddNewResident.Cursor = Cursors.Hand
-
-        ' Back Button - Designer: Location(1362, 921)
-        _form.btnBack.Location = New Point(CInt(panelWidth * 0.801), btnY)
-        _form.btnBack.Size = New Size(btnWidth, btnHeight)
-        _form.btnBack.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        _form.btnBack.Font = New Font("Arial Narrow", 11.25F * scaleFactor, FontStyle.Bold)
-        _form.btnBack.Cursor = Cursors.Hand
+        SetButton(_form.btnAddNewFamilyMember, CInt(w * 0.094), btnY, btnW, btnH, font,
+                  AnchorStyles.Bottom Or AnchorStyles.Left)
+        SetButton(_form.btnSaveChanges, CInt(w * 0.342), btnY, btnW, btnH, font,
+                  AnchorStyles.Bottom Or AnchorStyles.Left)
+        SetButton(_form.btnAddNewResident, CInt(w * 0.576), btnY, btnW, btnH, font,
+                  AnchorStyles.Bottom Or AnchorStyles.Left)
+        SetButton(_form.btnBack, CInt(w * 0.801), btnY, btnW, btnH, font,
+                  AnchorStyles.Bottom Or AnchorStyles.Right)
     End Sub
 
-    ''' <summary>
-    ''' Cleanup - remove event handlers to prevent memory leaks
-    ''' </summary>
+    ' ============================================================================
+    ' PRIVATE MICRO-HELPERS
+    ' ============================================================================
+
+    Private Shared Sub SetLabel(lbl As Label, x As Integer, y As Integer, fontSize As Single)
+        lbl.Location = New Point(x, y)
+        lbl.Font = New Font("Arial", fontSize, FontStyle.Bold)
+    End Sub
+
+    Private Shared Sub SetTextBox(txt As TextBox, x As Integer, y As Integer,
+                                  width As Integer, height As Integer, fontSize As Single)
+        txt.Location = New Point(x, y)
+        txt.Size = New Size(width, height)
+        txt.Font = New Font("Arial", fontSize, FontStyle.Regular)
+    End Sub
+
+    Private Shared Sub SetComboBox(cb As ComboBox, x As Integer, y As Integer,
+                                   width As Integer, height As Integer, fontSize As Single)
+        cb.Location = New Point(x, y)
+        cb.Size = New Size(width, height)
+        cb.Font = New Font("Arial", fontSize, FontStyle.Regular)
+    End Sub
+
+    Private Shared Sub SetButton(btn As Button, x As Integer, y As Integer,
+                                 width As Integer, height As Integer,
+                                 fontSize As Single, anchor As AnchorStyles)
+        btn.Location = New Point(x, y)
+        btn.Size = New Size(width, height)
+        btn.Font = New Font("Arial Narrow", fontSize, FontStyle.Bold)
+        btn.Anchor = anchor
+        btn.Cursor = Cursors.Hand
+    End Sub
+
+    ' ============================================================================
+    ' CLEANUP
+    ' ============================================================================
     Public Sub Cleanup()
-        resizeTimer.Stop()
-        RemoveHandler SystemEvents.DisplaySettingsChanged, AddressOf SystemDisplayChanged
+        _resizeTimer.Stop()
+        RemoveHandler SystemEvents.DisplaySettingsChanged, AddressOf SystemDisplay_Changed
     End Sub
 
 End Class

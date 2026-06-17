@@ -23,9 +23,8 @@ Partial Class HouseholdEditFamily_Form
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.FillPanel = New System.Windows.Forms.Panel()
+        Me.btnAddNewFamilyMember = New System.Windows.Forms.Button()
         Me.EditFamilylbl = New System.Windows.Forms.Label()
-        Me.btnEditPosition = New System.Windows.Forms.Button()
-        Me.btnEditMember = New System.Windows.Forms.Button()
         Me.btnAddNewResident = New System.Windows.Forms.Button()
         Me.btnBack = New System.Windows.Forms.Button()
         Me.btnSaveChanges = New System.Windows.Forms.Button()
@@ -48,7 +47,6 @@ Partial Class HouseholdEditFamily_Form
         Me.FamilyNamelbl = New System.Windows.Forms.Label()
         Me.txtFamilyID = New System.Windows.Forms.TextBox()
         Me.FamilyIDlbl = New System.Windows.Forms.Label()
-        Me.btnAddNewFamilyMember = New System.Windows.Forms.Button()
         Me.FillPanel.SuspendLayout()
         CType(Me.FamilyMembersDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -58,8 +56,6 @@ Partial Class HouseholdEditFamily_Form
         Me.FillPanel.BackColor = System.Drawing.Color.Transparent
         Me.FillPanel.Controls.Add(Me.btnAddNewFamilyMember)
         Me.FillPanel.Controls.Add(Me.EditFamilylbl)
-        Me.FillPanel.Controls.Add(Me.btnEditPosition)
-        Me.FillPanel.Controls.Add(Me.btnEditMember)
         Me.FillPanel.Controls.Add(Me.btnAddNewResident)
         Me.FillPanel.Controls.Add(Me.btnBack)
         Me.FillPanel.Controls.Add(Me.btnSaveChanges)
@@ -88,6 +84,19 @@ Partial Class HouseholdEditFamily_Form
         Me.FillPanel.Size = New System.Drawing.Size(1700, 1004)
         Me.FillPanel.TabIndex = 0
         '
+        'btnAddNewFamilyMember
+        '
+        Me.btnAddNewFamilyMember.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
+        Me.btnAddNewFamilyMember.FlatAppearance.BorderSize = 0
+        Me.btnAddNewFamilyMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnAddNewFamilyMember.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnAddNewFamilyMember.Location = New System.Drawing.Point(160, 921)
+        Me.btnAddNewFamilyMember.Name = "btnAddNewFamilyMember"
+        Me.btnAddNewFamilyMember.Size = New System.Drawing.Size(199, 44)
+        Me.btnAddNewFamilyMember.TabIndex = 9
+        Me.btnAddNewFamilyMember.Text = "Add New Member"
+        Me.btnAddNewFamilyMember.UseVisualStyleBackColor = False
+        '
         'EditFamilylbl
         '
         Me.EditFamilylbl.AutoSize = True
@@ -97,32 +106,6 @@ Partial Class HouseholdEditFamily_Form
         Me.EditFamilylbl.Size = New System.Drawing.Size(163, 32)
         Me.EditFamilylbl.TabIndex = 0
         Me.EditFamilylbl.Text = "Edit Family"
-        '
-        'btnEditPosition
-        '
-        Me.btnEditPosition.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnEditPosition.FlatAppearance.BorderSize = 0
-        Me.btnEditPosition.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnEditPosition.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnEditPosition.Location = New System.Drawing.Point(1522, 389)
-        Me.btnEditPosition.Name = "btnEditPosition"
-        Me.btnEditPosition.Size = New System.Drawing.Size(136, 44)
-        Me.btnEditPosition.TabIndex = 13
-        Me.btnEditPosition.Text = "Edit Position"
-        Me.btnEditPosition.UseVisualStyleBackColor = False
-        '
-        'btnEditMember
-        '
-        Me.btnEditMember.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnEditMember.FlatAppearance.BorderSize = 0
-        Me.btnEditMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnEditMember.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnEditMember.Location = New System.Drawing.Point(1367, 389)
-        Me.btnEditMember.Name = "btnEditMember"
-        Me.btnEditMember.Size = New System.Drawing.Size(136, 44)
-        Me.btnEditMember.TabIndex = 12
-        Me.btnEditMember.Text = "Edit Member"
-        Me.btnEditMember.UseVisualStyleBackColor = False
         '
         'btnAddNewResident
         '
@@ -156,7 +139,7 @@ Partial Class HouseholdEditFamily_Form
         Me.btnSaveChanges.FlatAppearance.BorderSize = 0
         Me.btnSaveChanges.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnSaveChanges.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSaveChanges.Location = New System.Drawing.Point(582, 921)
+        Me.btnSaveChanges.Location = New System.Drawing.Point(585, 921)
         Me.btnSaveChanges.Name = "btnSaveChanges"
         Me.btnSaveChanges.Size = New System.Drawing.Size(199, 44)
         Me.btnSaveChanges.TabIndex = 10
@@ -344,19 +327,6 @@ Partial Class HouseholdEditFamily_Form
         Me.FamilyIDlbl.TabIndex = 0
         Me.FamilyIDlbl.Text = "Family ID"
         '
-        'btnAddNewFamilyMember
-        '
-        Me.btnAddNewFamilyMember.BackColor = System.Drawing.Color.FromArgb(CType(CType(159, Byte), Integer), CType(CType(190, Byte), Integer), CType(CType(168, Byte), Integer))
-        Me.btnAddNewFamilyMember.FlatAppearance.BorderSize = 0
-        Me.btnAddNewFamilyMember.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnAddNewFamilyMember.Font = New System.Drawing.Font("Arial Narrow", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnAddNewFamilyMember.Location = New System.Drawing.Point(160, 921)
-        Me.btnAddNewFamilyMember.Name = "btnAddNewFamilyMember"
-        Me.btnAddNewFamilyMember.Size = New System.Drawing.Size(199, 44)
-        Me.btnAddNewFamilyMember.TabIndex = 9
-        Me.btnAddNewFamilyMember.Text = "Add New Member"
-        Me.btnAddNewFamilyMember.UseVisualStyleBackColor = False
-        '
         'HouseholdEditFamily_Form
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
@@ -399,8 +369,6 @@ Partial Class HouseholdEditFamily_Form
     Friend WithEvents btnAddNewResident As Button
     Friend WithEvents btnBack As Button
     Friend WithEvents btnSaveChanges As Button
-    Friend WithEvents btnEditPosition As Button
-    Friend WithEvents btnEditMember As Button
     Friend WithEvents EditFamilylbl As Label
     Friend WithEvents btnAddNewFamilyMember As Button
 End Class
